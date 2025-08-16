@@ -12,8 +12,7 @@ public class Security {
             "/js/**",
             "/images/**",
             "/webjars/**",
-            "/v1/terms/**",
-            "/v1/token/**",
+            "/api/v1/tokens/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/api-docs/**",
@@ -24,10 +23,12 @@ public class Security {
             "/actuator"
     );
 
-    public static final String USER_PATH = "/v1/**";
+    public static final String USER_PATH = "/api/v1/**";
+    public static final String ADMIN_PATH = "/api/v1/admin/**";
 
     public static final String USER_ROLE = "USER";
-    
+    public static final String ADMIN_ROLE = "ADMIN";
+
     public static final String KAKAO = "kakao";
     public static final String GOOGLE = "google";
     public static final String NAVER = "naver";

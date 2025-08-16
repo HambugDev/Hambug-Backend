@@ -1,9 +1,10 @@
 package com.hambug.Hambug.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hambug.Hambug.domain.jwt.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.token.dto.JwtTokenDto;
 import com.hambug.Hambug.domain.user.entity.Role;
 import com.hambug.Hambug.domain.user.entity.User;
+import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,6 +46,14 @@ public class UserDto {
                 .email(user.getEmail())
                 .role(user.getRole())
                 .isActive(user.isActive()).build();
+    }
+
+    public static UserDto reissue(Claims claims) {
+        return UserDto.builder()
+                .userId(Long.parseLong(claims.getSubject()))
+                .nickname(claims.get("nickname").toString())
+                .role(Role.valueOf(claims.get("role").toString()))
+                .build();
     }
 
     public static UserDto toDto(User user) {

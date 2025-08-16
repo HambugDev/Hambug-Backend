@@ -1,4 +1,4 @@
-package com.hambug.Hambug.domain.jwt.entity;
+package com.hambug.Hambug.domain.token.entity;
 
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.entity.User;
@@ -37,5 +37,10 @@ public class Token extends Timestamped {
                 .expiredAt(expiredAt)
                 .user(User.toEntity(userDto))
                 .build();
+    }
+
+    void updateToken(LocalDateTime expiredAt, String token) {
+        this.expiredAt = expiredAt;
+        this.token = token;
     }
 }

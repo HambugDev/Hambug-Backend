@@ -1,5 +1,6 @@
 package com.hambug.Hambug.global.security;
 
+import com.hambug.Hambug.global.response.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -29,7 +30,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             securityResponseHandler.handleSecurityError(
                     request,
                     response,
-                    ExceptionType.JWT_TOKEN_EXPIRED,
+                    ErrorCode.JWT_TOKEN_EXPIRED,
                     HttpStatus.UNAUTHORIZED,
                     e
             );
@@ -38,7 +39,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             securityResponseHandler.handleSecurityError(
                     request,
                     response,
-                    ExceptionType.JWT_TOKEN_INVALID,
+                    ErrorCode.JWT_TOKEN_INVALID,
                     HttpStatus.UNAUTHORIZED,
                     e
             );
@@ -47,7 +48,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             securityResponseHandler.handleSecurityError(
                     request,
                     response,
-                    ExceptionType.SERVER_ERROR,
+                    ErrorCode.SERVER_ERROR,
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     e
             );

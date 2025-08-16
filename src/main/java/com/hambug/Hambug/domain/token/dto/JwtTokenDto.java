@@ -1,4 +1,4 @@
-package com.hambug.Hambug.domain.jwt.dto;
+package com.hambug.Hambug.domain.token.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

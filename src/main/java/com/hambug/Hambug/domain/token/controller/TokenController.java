@@ -1,0 +1,30 @@
+package com.hambug.Hambug.domain.token.controller;
+
+import com.hambug.Hambug.domain.token.service.JwtService;
+import com.hambug.Hambug.global.response.CommonResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/tokens")
+@RequiredArgsConstructor
+public class TokenController {
+
+    private static final String BEARER = "Bearer ";
+    private final JwtService jwtService;
+
+    @PostMapping("/refresh")
+    public CommonResponse<?> refreshToken(
+            @RequestHeader(value = "Authorization", required = false) String authorization
+    ) {
+        if (authorization == null || !authorization.startsWith(BEARER)) {
+            return CommonResponse.fail("Authorization header missing or invalid");
+        }
+        String refreshToken = authorization.substring(BEARER.length());
+        String reissueTokensFromRefresh = jwtService.reissueTokensFromRefresh(refreshToken);
+        return CommonResponse.ok(reissueTokensFromRefresh);
+    }
+}

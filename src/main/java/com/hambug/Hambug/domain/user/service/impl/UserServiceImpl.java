@@ -1,8 +1,8 @@
 package com.hambug.Hambug.domain.user.service.impl;
 
-import com.hambug.Hambug.domain.jwt.dto.JwtTokenDto;
-import com.hambug.Hambug.domain.jwt.service.JwtService;
 import com.hambug.Hambug.domain.oauth.service.Oauth2UserInfo;
+import com.hambug.Hambug.domain.token.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.token.service.JwtService;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     private UserDto login(User user) {
         UserDto userDto = UserDto.authUserDTO(user);
         String accessToken = jwtService.generateAccessToken(userDto);
-        String refreshToken = jwtService.getRefreshToken(userDto.getUserId());
+        String refreshToken = jwtService.getRefreshToken(userDto);
         userDto.addTokens(JwtTokenDto.of(accessToken, refreshToken));
         return userDto;
     }

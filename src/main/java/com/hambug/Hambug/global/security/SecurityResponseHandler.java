@@ -1,7 +1,8 @@
 package com.hambug.Hambug.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hambug.Hambug.global.response.SecurityErrorResponse;
+import com.hambug.Hambug.global.response.ErrorCode;
+import com.hambug.Hambug.global.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,21 +22,21 @@ public class SecurityResponseHandler {
 
     public void handleSecurityError(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    ExceptionType exceptionType,
+                                    ErrorCode errorCode,
                                     HttpStatus status,
                                     Exception exception) throws IOException {
 
         log.warn("보안 예외 발생: {} - {} ({})",
                 request.getRequestURI(),
-                exceptionType.getMessage(),
+                errorCode.getMessage(),
                 exception.getMessage());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(status.value());
 
-        SecurityErrorResponse errorResponse = SecurityErrorResponse.of(
-                exceptionType,
+        ErrorResponse errorResponse = ErrorResponse.of(
+                errorCode,
                 request.getRequestURI()
         );
 

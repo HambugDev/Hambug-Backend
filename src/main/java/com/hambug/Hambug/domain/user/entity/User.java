@@ -29,11 +29,17 @@ public class User extends Timestamped {
     private String nickname;
     private String email;
 
-    public static User of(Oauth2UserInfo userInfo) {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ham_rank")
+    private Rank rank;
+
+    public static User of(Oauth2UserInfo userInfo, String nickname) {
         return User.builder()
                 .email(userInfo.getEmail())
                 .socialId(userInfo.getId())
                 .name(userInfo.getName())
+                .nickname(nickname)
+                .rank(Rank.HAM_BEGINNER)
                 .role(Role.ROLE_USER)
                 .isActive(true)
                 .build();

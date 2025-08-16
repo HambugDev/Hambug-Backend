@@ -21,6 +21,8 @@ public class UserDto {
 
     String name;
 
+    String nickname;
+
     Role role;
 
     @JsonIgnore
@@ -35,15 +37,16 @@ public class UserDto {
     @JsonIgnore
     String refreshToken;
 
-    public static UserDto authUserDTO(User user, boolean isLogin) {
+    public static UserDto authUserDTO(User user) {
         return UserDto.builder()
                 .userId(user.getId())
                 .name(user.getName())
+                .nickname(user.getNickname())
                 .email(user.getEmail())
                 .role(user.getRole())
-                .isLogin(isLogin)
                 .isActive(user.isActive()).build();
     }
+
 
     public void addTokens(JwtTokenDto jwtTokenDto) {
         this.accessToken = jwtTokenDto.getAccessToken();

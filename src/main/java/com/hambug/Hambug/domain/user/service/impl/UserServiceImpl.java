@@ -11,29 +11,45 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private static final String NICKNAME_PREFIX = "HAMBUG_";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final long TEN_POW_10 = 1_000_000_0000L;
+
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+
     @Override
     public UserDto signUpOrLogin(Oauth2UserInfo userInfo) {
-        log.info("접근은함");
         return userRepository.findByEmail(userInfo.getEmail())
-                .map(user -> {
-                    UserDto userDto = UserDto.authUserDTO(user, true);
-                    String accessToken = jwtService.generateAccessToken(userDto);
-                    String refreshToken = jwtService.getRefreshToken(userDto.getUserId());
-                    userDto.addTokens(JwtTokenDto.of(accessToken, refreshToken));
-                    return userDto;
-                })
-                .orElseGet(() -> {
-                    User user = userRepository.save(User.of(userInfo));
-                    UserDto userDto = UserDto.authUserDTO(user, true);
-                    userDto.addTokens(jwtService.generateTokens(userDto));
-                    return UserDto.authUserDTO(user, false);
-                });
+                .map(this::login)
+                .orElseGet(() -> register(userInfo));
+    }
+
+    private UserDto register(Oauth2UserInfo userInfo) {
+        User user = userRepository.save(User.of(userInfo, generateRandomNickname()));
+        UserDto userDto = UserDto.authUserDTO(user);
+        userDto.addTokens(jwtService.generateTokens(userDto));
+        return userDto;
+    }
+
+    private UserDto login(User user) {
+        UserDto userDto = UserDto.authUserDTO(user);
+        String accessToken = jwtService.generateAccessToken(userDto);
+        String refreshToken = jwtService.getRefreshToken(userDto.getUserId());
+        userDto.addTokens(JwtTokenDto.of(accessToken, refreshToken));
+        return userDto;
+    }
+
+    private String generateRandomNickname() {
+        long number = Math.floorMod(SECURE_RANDOM.nextLong(), TEN_POW_10);
+        String suffix = String.format("%010d", number);
+        return NICKNAME_PREFIX + suffix;
     }
 }

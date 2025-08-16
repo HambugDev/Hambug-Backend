@@ -58,7 +58,7 @@ public class JwtService {
                 .setSubject(userDto.userIdStr())
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiry))
-                .claim("email", userDto.getEmail())
+                .claim("email", userDto.getNickname())
                 .claim("role", userDto.getRole())
                 .claim("type", "access");
 

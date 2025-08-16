@@ -6,4 +6,6 @@ import com.hambug.Hambug.domain.user.dto.UserDto;
 public interface UserService {
 
     UserDto signUpOrLogin(Oauth2UserInfo userInfo);
+
+    UserDto getById(Long userId);
 }

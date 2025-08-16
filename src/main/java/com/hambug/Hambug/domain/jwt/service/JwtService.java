@@ -4,9 +4,7 @@ import com.hambug.Hambug.domain.jwt.dto.JwtTokenDto;
 import com.hambug.Hambug.domain.jwt.entity.Token;
 import com.hambug.Hambug.domain.jwt.repository.TokenRepository;
 import com.hambug.Hambug.domain.user.dto.UserDto;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,5 +80,43 @@ public class JwtService {
         LocalDateTime expiredAt = LocalDateTime.ofInstant(expiry, ZoneId.systemDefault());
         tokenRepository.save(Token.of(jwtToken, expiredAt, userDto));
         return jwtToken;
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Date expiration = getExpirationFromToken(token);
+            return expiration.before(new Date());
+        } catch (JwtException e) {
+            throw new JwtException(e.getMessage());
+        } catch (Exception e) {
+            throw new ExpiredJwtException(null, null, "토큰 만료");
+        }
+    }
+
+    public void validateToken(String token) {
+        try {
+            parseToken(token);
+        } catch (Exception e) {
+            log.warn("토큰 검증 실패: {}", e.getMessage());
+            throw new JwtException("존재하지 않는 토큰 사용", e.getCause());
+        }
+    }
+
+    public Date getExpirationFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.getExpiration();
+    }
+
+    public Claims parseToken(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(publicKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (JwtException e) {
+            log.error("JWT 토큰 파싱 실패: {}", e.getMessage());
+            throw new JwtException("유효하지 않은 JWT 토큰입니다.");
+        }
     }
 }

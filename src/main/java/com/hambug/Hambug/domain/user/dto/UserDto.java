@@ -47,6 +47,15 @@ public class UserDto {
                 .isActive(user.isActive()).build();
     }
 
+    public static UserDto toDto(User user) {
+        return UserDto.builder()
+                .userId(user.getId())
+                .name(user.getName())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .isActive(user.isActive()).build();
+    }
 
     public void addTokens(JwtTokenDto jwtTokenDto) {
         this.accessToken = jwtTokenDto.getAccessToken();

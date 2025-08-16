@@ -7,15 +7,18 @@ import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.domain.user.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private static final String NICKNAME_PREFIX = "HAMBUG_";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -31,6 +34,14 @@ public class UserServiceImpl implements UserService {
                 .map(this::login)
                 .orElseGet(() -> register(userInfo));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto getById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
+        return UserDto.toDto(user);
+    }
+
 
     private UserDto register(Oauth2UserInfo userInfo) {
         User user = userRepository.save(User.of(userInfo, generateRandomNickname()));

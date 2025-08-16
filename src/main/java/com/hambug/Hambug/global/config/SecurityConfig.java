@@ -3,6 +3,8 @@ package com.hambug.Hambug.global.config;
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2FailHandler;
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2SuccessHandler;
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2UserService;
+import com.hambug.Hambug.global.security.JwtAuthenticationFilter;
+import com.hambug.Hambug.global.security.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import static com.hambug.Hambug.global.constatns.Security.*;
@@ -26,6 +29,8 @@ public class SecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
     private final CustomOauth2SuccessHandler customOauth2SuccessHandler;
     private final CustomOauth2FailHandler customOauth2FailHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
 
     @Bean
@@ -52,9 +57,9 @@ public class SecurityConfig {
 //        http.exceptionHandling((exception) ->
 //                exception.authenticationEntryPoint(customAuthenticationEntryPoint)
 //                        .accessDeniedHandler(customAccessDeniedHandler));
-//
-//        http.addFilterBefore(jwtExceptionFilter, UsernamePasswordAuthenticationFilter.class);
-//        http.addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(jwtExceptionFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();

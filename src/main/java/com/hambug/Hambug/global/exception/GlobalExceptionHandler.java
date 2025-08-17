@@ -1,5 +1,6 @@
 package com.hambug.Hambug.global.exception;
 
+import com.hambug.Hambug.global.exception.custom.AlreadyEntityException;
 import com.hambug.Hambug.global.exception.custom.JwtException;
 import com.hambug.Hambug.global.response.ErrorCode;
 import com.hambug.Hambug.global.response.ErrorResponse;
@@ -24,5 +25,11 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
         ErrorResponse response = ErrorResponse.of(ErrorCode.NOT_FOUND_ENTITY, e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlreadyEntityException.class)
+    protected ResponseEntity<ErrorResponse> handleAlreadyException(AlreadyEntityException e) {
+        ErrorResponse response = ErrorResponse.of(e.getErrorCode(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

@@ -28,6 +28,7 @@ public class User extends Timestamped {
     private Role role;
     private String nickname;
     private String email;
+    private String profileImageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ham_rank")
@@ -39,6 +40,7 @@ public class User extends Timestamped {
                 .socialId(userInfo.getId())
                 .name(userInfo.getName())
                 .nickname(nickname)
+                .profileImageUrl("not yeet")
                 .rank(Rank.HAM_BEGINNER)
                 .role(Role.ROLE_USER)
                 .isActive(true)

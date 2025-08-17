@@ -42,6 +42,11 @@ public class UserServiceImpl implements UserService {
         return UserDto.toDto(user);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public User getReferenceById(Long userId) {
+        return userRepository.getReferenceById(userId);
+    }
 
     private UserDto register(Oauth2UserInfo userInfo) {
         User user = userRepository.save(User.of(userInfo, generateRandomNickname()));

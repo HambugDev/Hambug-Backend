@@ -10,11 +10,14 @@ import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.exception.custom.AlreadyEntityException;
 import com.hambug.Hambug.global.exception.custom.JwtException;
 import com.hambug.Hambug.global.response.ErrorCode;
+import com.hambug.Hambug.global.s3.service.S3Service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
 
@@ -29,6 +32,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final S3Service s3Service;
 
 
     @Override
@@ -41,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserDto getById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
+        User user = getUser(userId);
         return UserDto.toDto(user);
     }
 
@@ -53,17 +57,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateNickname(Long userId, Long authUserId, String nickname) {
-        if (!userId.equals(authUserId)) {
-            throw new JwtException(ErrorCode.JWT_TOKEN_INVALID, "작성자만 수정 가능합니다.");
-        }
+        validOwner(userId, authUserId);
         userRepository.findByNickname(nickname).ifPresent(existing -> {
             throw new AlreadyEntityException(ErrorCode.ALREADY_ENTITY, "중복된 닉네임 입니다.");
         });
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
+        User user = getUser(userId);
         user.updateNickname(nickname);
         return UserDto.toDto(user);
+    }
+
+
+    @SneakyThrows
+    @Override
+    public UserDto updateProfileImage(Long userId, Long authUserId, MultipartFile file) {
+        validOwner(userId, authUserId);
+        User user = getUser(userId);
+        String uploadImage = s3Service.uploadImage(file);
+        user.updateProfileImage(uploadImage);
+        return UserDto.toDto(user);
+    }
+
+    private User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
+    }
+
+    private void validOwner(Long userId, Long authUserId) {
+        if (!userId.equals(authUserId)) {
+            throw new JwtException(ErrorCode.JWT_TOKEN_INVALID, "작성자만 수정 가능합니다.");
+        }
     }
 
     private UserDto register(Oauth2UserInfo userInfo) {

@@ -4,9 +4,12 @@ import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.response.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.hambug.Hambug.domain.user.dto.UserRequestDto.UpdateUserNicknameReqDto;
 
@@ -23,12 +26,21 @@ public class UserController {
         return CommonResponse.ok(userDto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/nickname")
     public CommonResponse<?> updateNickName(@PathVariable("id") Long id,
-                                            @RequestBody UpdateUserNicknameReqDto body,
+                                            @Valid @RequestBody UpdateUserNicknameReqDto body,
                                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
         UserDto userDto = userService.updateNickname(id, userId, body.nickname());
+        return CommonResponse.ok(userDto);
+    }
+
+    @PutMapping(value = "/{id}/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse<?> updateProfile(@PathVariable("id") Long id,
+                                           @RequestPart(value = "file") MultipartFile file,
+                                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = getUserId(principalDetails);
+        UserDto userDto = userService.updateProfileImage(id, userId, file);
         return CommonResponse.ok(userDto);
     }
 

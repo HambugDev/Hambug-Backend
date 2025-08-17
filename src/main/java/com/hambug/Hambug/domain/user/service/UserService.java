@@ -11,4 +11,6 @@ public interface UserService {
     UserDto getById(Long userId);
 
     User getReferenceById(Long userId);
+
+    UserDto updateNickname(Long userId, Long authUserId, String nickname);
 }

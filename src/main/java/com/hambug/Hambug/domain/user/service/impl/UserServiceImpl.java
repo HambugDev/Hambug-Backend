@@ -7,6 +7,9 @@ import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.domain.user.service.UserService;
+import com.hambug.Hambug.global.exception.custom.AlreadyEntityException;
+import com.hambug.Hambug.global.exception.custom.JwtException;
+import com.hambug.Hambug.global.response.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +49,21 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public User getReferenceById(Long userId) {
         return userRepository.getReferenceById(userId);
+    }
+
+    @Override
+    public UserDto updateNickname(Long userId, Long authUserId, String nickname) {
+        if (!userId.equals(authUserId)) {
+            throw new JwtException(ErrorCode.JWT_TOKEN_INVALID, "작성자만 수정 가능합니다.");
+        }
+        userRepository.findByNickname(nickname).ifPresent(existing -> {
+            throw new AlreadyEntityException(ErrorCode.ALREADY_ENTITY, "중복된 닉네임 입니다.");
+        });
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
+        user.updateNickname(nickname);
+        return UserDto.toDto(user);
     }
 
     private UserDto register(Oauth2UserInfo userInfo) {

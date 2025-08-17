@@ -4,11 +4,9 @@ import com.hambug.Hambug.domain.oauth.service.Oauth2UserInfo;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.timeStamped.Timestamped;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
@@ -54,5 +52,9 @@ public class User extends Timestamped {
                 .name(userDto.getName())
                 .role(userDto.getRole())
                 .isActive(userDto.isActive()).build();
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

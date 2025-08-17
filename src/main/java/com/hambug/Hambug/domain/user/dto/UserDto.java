@@ -24,6 +24,8 @@ public class UserDto {
 
     String nickname;
 
+    String profileImageUrl;
+
     Role role;
 
     @JsonIgnore
@@ -61,6 +63,7 @@ public class UserDto {
                 .userId(user.getId())
                 .name(user.getName())
                 .nickname(user.getNickname())
+                .profileImageUrl(user.getProfileImageUrl())
                 .email(user.getEmail())
                 .role(user.getRole())
                 .isActive(user.isActive()).build();

@@ -1,7 +1,9 @@
 package com.hambug.Hambug.global.exception;
 
 import com.hambug.Hambug.global.exception.custom.JwtException;
+import com.hambug.Hambug.global.response.ErrorCode;
 import com.hambug.Hambug.global.response.ErrorResponse;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,5 +18,11 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleJwtException(JwtException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode(), e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
+        ErrorResponse response = ErrorResponse.of(ErrorCode.NOT_FOUND_ENTITY, e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

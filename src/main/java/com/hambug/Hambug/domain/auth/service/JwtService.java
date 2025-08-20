@@ -9,6 +9,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +62,11 @@ public class JwtService {
 
     public JwtTokenDto generateTokens(UserDto userDto) {
         return JwtTokenDto.of(generateAccessToken(userDto), generateRefreshToken(userDto).getToken());
+    }
+
+    public void logout(Long userId) {
+        Token token = tokenRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("토큰을 찾을수 없습니다."));
+        tokenRepository.delete(token);
     }
 
     @Transactional

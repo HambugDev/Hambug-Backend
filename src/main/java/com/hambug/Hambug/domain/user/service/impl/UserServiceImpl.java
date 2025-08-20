@@ -1,8 +1,8 @@
 package com.hambug.Hambug.domain.user.service.impl;
 
+import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.auth.service.JwtService;
 import com.hambug.Hambug.domain.oauth.service.Oauth2UserInfo;
-import com.hambug.Hambug.domain.token.dto.JwtTokenDto;
-import com.hambug.Hambug.domain.token.service.JwtService;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;

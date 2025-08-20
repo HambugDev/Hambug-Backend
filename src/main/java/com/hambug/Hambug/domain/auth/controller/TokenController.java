@@ -1,6 +1,6 @@
-package com.hambug.Hambug.domain.token.controller;
+package com.hambug.Hambug.domain.auth.controller;
 
-import com.hambug.Hambug.domain.token.service.JwtService;
+import com.hambug.Hambug.domain.auth.service.JwtService;
 import com.hambug.Hambug.global.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

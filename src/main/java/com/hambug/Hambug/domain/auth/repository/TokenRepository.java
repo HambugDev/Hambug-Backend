@@ -1,6 +1,6 @@
-package com.hambug.Hambug.domain.token.repository;
+package com.hambug.Hambug.domain.auth.repository;
 
-import com.hambug.Hambug.domain.token.entity.Token;
+import com.hambug.Hambug.domain.auth.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;

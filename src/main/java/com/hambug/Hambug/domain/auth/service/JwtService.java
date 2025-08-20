@@ -1,8 +1,8 @@
-package com.hambug.Hambug.domain.token.service;
+package com.hambug.Hambug.domain.auth.service;
 
-import com.hambug.Hambug.domain.token.dto.JwtTokenDto;
-import com.hambug.Hambug.domain.token.entity.Token;
-import com.hambug.Hambug.domain.token.repository.TokenRepository;
+import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.auth.entity.Token;
+import com.hambug.Hambug.domain.auth.repository.TokenRepository;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.exception.custom.JwtException;
 import io.jsonwebtoken.Claims;

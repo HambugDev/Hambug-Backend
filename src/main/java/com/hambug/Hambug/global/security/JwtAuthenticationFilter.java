@@ -1,7 +1,7 @@
 package com.hambug.Hambug.global.security;
 
+import com.hambug.Hambug.domain.auth.service.JwtService;
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
-import com.hambug.Hambug.domain.token.service.JwtService;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
 import io.jsonwebtoken.Claims;

@@ -1,7 +1,7 @@
 package com.hambug.Hambug.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hambug.Hambug.domain.token.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
 import com.hambug.Hambug.domain.user.entity.Role;
 import com.hambug.Hambug.domain.user.entity.User;
 import io.jsonwebtoken.Claims;

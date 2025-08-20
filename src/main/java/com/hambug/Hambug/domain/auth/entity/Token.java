@@ -1,4 +1,4 @@
-package com.hambug.Hambug.domain.token.entity;
+package com.hambug.Hambug.domain.auth.entity;
 
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.entity.User;

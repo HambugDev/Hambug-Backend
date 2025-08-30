@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface FcmTokenApi {
 
     @Operation(summary = "FCM 토큰 등록/갱신", description = "사용자의 FCM 디바이스 토큰을 등록하거나 갱신합니다.")
-    CommonResponse<?> register(@RequestBody RegisterFcmTokenRequest request,
-                               @Parameter(hidden = true) Authentication authentication);
+    CommonResponse<Boolean> register(@RequestBody RegisterFcmTokenRequest request,
+                                     @Parameter(hidden = true) Authentication authentication);
 
 }

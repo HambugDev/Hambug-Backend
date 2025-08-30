@@ -21,7 +21,7 @@ public class FcmTokenController implements FcmTokenApi {
     private final FcmDeviceTokenService fcmDeviceTokenService;
 
     @PostMapping("/tokens")
-    public CommonResponse<?> register(@Valid @RequestBody RegisterFcmTokenRequest request, Authentication authentication) {
+    public CommonResponse<Boolean> register(@Valid @RequestBody RegisterFcmTokenRequest request, Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         Long userId = principal.getUserDto().getUserId();
         fcmDeviceTokenService.registerOrUpdate(userId, request);

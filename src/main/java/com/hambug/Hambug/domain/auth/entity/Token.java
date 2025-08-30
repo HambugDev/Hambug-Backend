@@ -5,11 +5,13 @@ import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.global.timeStamped.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
+@SQLRestriction("deleted_at is null")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

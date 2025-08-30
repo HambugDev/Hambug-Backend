@@ -16,4 +16,6 @@ public interface UserService {
     UserDto updateNickname(Long userId, Long authUserId, String nickname);
 
     UserDto updateProfileImage(Long userId, Long authUserId, MultipartFile file);
+
+    void softDeleteUser(Long userId);
 }

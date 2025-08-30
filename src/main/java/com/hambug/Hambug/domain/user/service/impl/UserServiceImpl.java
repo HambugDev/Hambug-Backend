@@ -78,6 +78,14 @@ public class UserServiceImpl implements UserService {
         return UserDto.toDto(user);
     }
 
+    @Override
+    public void softDeleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
+        user.setActive(false);
+        user.markDeleted();
+    }
+
     private User getUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
     }

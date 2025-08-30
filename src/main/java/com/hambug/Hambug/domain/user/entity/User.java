@@ -5,11 +5,11 @@ import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.timeStamped.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Where(clause = "deleted_at is null")
+@SQLRestriction("deleted_at is null")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

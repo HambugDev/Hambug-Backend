@@ -2,9 +2,7 @@ package com.hambug.Hambug.domain.auth.service;
 
 import com.hambug.Hambug.domain.oauth.apple.AppleClientSecretGenerator;
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
-import com.hambug.Hambug.domain.user.entity.User;
-import com.hambug.Hambug.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.hambug.Hambug.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -18,8 +16,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class OauthUnlinkService {
 
     private final OAuthService oAuthService;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final AppleClientSecretGenerator clientSecretGenerator;
+    private final JwtService jwtService;
 
     @Transactional
     public void unlink(PrincipalDetails principalDetails, Authentication authentication) {
@@ -39,7 +38,7 @@ public class OauthUnlinkService {
         String accessToken = oAuthService.getAccessToken(authentication, "kakao");
 
         try {
-            String response = client.post()
+            client.post()
                     .uri("/v1/user/unlink")
                     .header("Authorization", "Bearer " + accessToken)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
@@ -47,8 +46,8 @@ public class OauthUnlinkService {
                     .bodyToMono(String.class)
                     .block();
 
-            log.info("카카오 unlink 응답: {}", response);
-            softDeleteUser(userId);
+            userService.softDeleteUser(userId);
+            jwtService.softDelete(userId);
         } catch (Exception e) {
             log.error("카카오 unlink 요청 실패: {}", e.getMessage(), e);
             throw new RuntimeException("카카오 unlink 실패", e);
@@ -72,22 +71,11 @@ public class OauthUnlinkService {
                     .bodyToMono(String.class)
                     .block();
 
-            log.info("애플 unlink 응답: {}", response);
-
-            softDeleteUser(userId);
+            userService.softDeleteUser(userId);
 
         } catch (Exception e) {
             log.error("애플 unlink 요청 실패: {}", e.getMessage(), e);
             throw new RuntimeException("애플 unlink 실패", e);
         }
-    }
-
-    private void softDeleteUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
-        user.setActive(false);
-        user.markDeleted();
-        // JPA dirty checking에 의해 트랜잭션 커밋 시 자동 반영
-        log.info("사용자 {} 소프트 삭제 처리(deleted_at 설정, isActive=false)", userId);
     }
 }

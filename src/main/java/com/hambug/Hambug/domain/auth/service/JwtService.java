@@ -6,11 +6,11 @@ import com.hambug.Hambug.domain.auth.repository.TokenRepository;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.event.UserLogoutFcmEvent;
 import com.hambug.Hambug.global.exception.custom.JwtException;
+import com.hambug.Hambug.global.timeStamped.Timestamped;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,9 +68,12 @@ public class JwtService {
     }
 
     public void logout(Long userId) {
-        Token token = tokenRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("토큰을 찾을수 없습니다."));
-        tokenRepository.delete(token);
+        softDelete(userId);
         eventPublisher.publishEvent(new UserLogoutFcmEvent(userId));
+    }
+
+    public void softDelete(Long userId) {
+        tokenRepository.findByUserId(userId).ifPresent(Timestamped::markDeleted);
     }
 
     @Transactional

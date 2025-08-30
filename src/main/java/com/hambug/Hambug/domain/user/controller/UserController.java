@@ -1,6 +1,7 @@
 package com.hambug.Hambug.domain.user.controller;
 
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
+import com.hambug.Hambug.domain.user.api.UserApi;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.response.CommonResponse;
@@ -16,29 +17,29 @@ import static com.hambug.Hambug.domain.user.dto.UserRequestDto.UpdateUserNicknam
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
-public class UserController {
+public class UserController implements UserApi {
 
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public CommonResponse<?> getUsers(@PathVariable("id") Long id) {
+    public CommonResponse<UserDto> getUsers(@PathVariable("id") Long id) {
         UserDto userDto = userService.getById(id);
         return CommonResponse.ok(userDto);
     }
 
     @PutMapping("/{id}/nickname")
-    public CommonResponse<?> updateNickName(@PathVariable("id") Long id,
-                                            @Valid @RequestBody UpdateUserNicknameReqDto body,
-                                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public CommonResponse<UserDto> updateNickName(@PathVariable("id") Long id,
+                                                  @Valid @RequestBody UpdateUserNicknameReqDto body,
+                                                  @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
         UserDto userDto = userService.updateNickname(id, userId, body.nickname());
         return CommonResponse.ok(userDto);
     }
 
     @PutMapping(value = "/{id}/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse<?> updateProfile(@PathVariable("id") Long id,
-                                           @RequestPart(value = "file") MultipartFile file,
-                                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public CommonResponse<UserDto> updateProfile(@PathVariable("id") Long id,
+                                                 @RequestPart(value = "file") MultipartFile file,
+                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
         UserDto userDto = userService.updateProfileImage(id, userId, file);
         return CommonResponse.ok(userDto);

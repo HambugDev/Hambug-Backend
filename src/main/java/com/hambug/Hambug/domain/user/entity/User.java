@@ -24,6 +24,10 @@ public class User extends Timestamped {
     private String name;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private LoginType loginType;
+
     private String nickname;
     private String email;
     private String profileImageUrl;
@@ -38,6 +42,7 @@ public class User extends Timestamped {
                 .socialId(userInfo.getId())
                 .name(userInfo.getName())
                 .nickname(nickname)
+                .loginType(userInfo.getLoginType())
                 .profileImageUrl("not yeet")
                 .rank(Rank.HAM_BEGINNER)
                 .role(Role.ROLE_USER)
@@ -50,6 +55,7 @@ public class User extends Timestamped {
                 .id(userDto.getUserId())
                 .email(userDto.getEmail())
                 .name(userDto.getName())
+                .loginType(userDto.getLoginType())
                 .role(userDto.getRole())
                 .isActive(userDto.isActive()).build();
     }

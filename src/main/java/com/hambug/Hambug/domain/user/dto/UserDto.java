@@ -2,6 +2,7 @@ package com.hambug.Hambug.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.user.entity.LoginType;
 import com.hambug.Hambug.domain.user.entity.Role;
 import com.hambug.Hambug.domain.user.entity.User;
 import io.jsonwebtoken.Claims;
@@ -26,6 +27,8 @@ public class UserDto {
     String nickname;
 
     String profileImageUrl;
+
+    LoginType loginType;
 
     Role role;
 
@@ -66,6 +69,7 @@ public class UserDto {
                 .name(user.getName())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
+                .loginType(user.getLoginType())
                 .email(user.getEmail())
                 .role(user.getRole())
                 .isActive(user.isActive()).build();

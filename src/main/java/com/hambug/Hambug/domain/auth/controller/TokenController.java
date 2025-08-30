@@ -42,6 +42,8 @@ public class TokenController implements TokenApi {
         return CommonResponse.ok(user);
     }
 
+    @PostMapping("/")
+
     private Long getUserId(PrincipalDetails principalDetails) {
         return principalDetails.getUser().getUserId();
     }

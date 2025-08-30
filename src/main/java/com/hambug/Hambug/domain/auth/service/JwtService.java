@@ -99,6 +99,7 @@ public class JwtService {
                 .setExpiration(Date.from(expiry))
                 .claim("nickname", userDto.getNickname())
                 .claim("role", userDto.getRole())
+                .claim("platform", userDto.getLoginType())
                 .claim("type", "access");
 
         return builder.signWith(privateKey, SignatureAlgorithm.RS256)

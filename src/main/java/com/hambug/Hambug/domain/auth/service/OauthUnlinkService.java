@@ -1,5 +1,7 @@
 package com.hambug.Hambug.domain.auth.service;
 
+import com.hambug.Hambug.domain.oauth.apple.AppleClientSecretGenerator;
+import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,6 +19,17 @@ public class OauthUnlinkService {
 
     private final OAuthService oAuthService;
     private final UserRepository userRepository;
+    private final AppleClientSecretGenerator clientSecretGenerator;
+
+    @Transactional
+    public void unlink(PrincipalDetails principalDetails, Authentication authentication) {
+        if (principalDetails.getUser().isKakao()) {
+            kakaoUnlink(principalDetails.getUser().getUserId(), authentication);
+            return;
+        }
+        appleUnlink(principalDetails.getUser().getUserId(),
+                oAuthService.getAccessToken(authentication, "apple"));
+    }
 
     @Transactional
     public void kakaoUnlink(Long userId, Authentication authentication) {
@@ -43,10 +56,30 @@ public class OauthUnlinkService {
     }
 
     @Transactional
-    public void appleUnlink(Long userId) {
-        // 애플 토큰 revoke 과정을 별도로 구현할 수 있지만,
-        // 현재는 계정 연동 해제 시 사용자 소프트 삭제를 수행합니다.
-        softDeleteUser(userId);
+    public void appleUnlink(Long userId, String refreshToken) {
+        WebClient client = WebClient.builder()
+                .baseUrl("https://appleid.apple.com")
+                .build();
+        try {
+            String response = client.post()
+                    .uri("/auth/revoke")
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .bodyValue("client_id=" + clientSecretGenerator.getClientId()
+                            + "&client_secret=" + clientSecretGenerator.generate()
+                            + "&token=" + refreshToken
+                            + "&token_type_hint=refresh_token")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            log.info("애플 unlink 응답: {}", response);
+
+            softDeleteUser(userId);
+
+        } catch (Exception e) {
+            log.error("애플 unlink 요청 실패: {}", e.getMessage(), e);
+            throw new RuntimeException("애플 unlink 실패", e);
+        }
     }
 
     private void softDeleteUser(Long userId) {

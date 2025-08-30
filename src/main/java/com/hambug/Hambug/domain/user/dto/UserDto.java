@@ -84,4 +84,7 @@ public class UserDto {
         return String.valueOf(this.userId);
     }
 
+    public boolean isKakao() {
+        return this.loginType == LoginType.KAKAO;
+    }
 }

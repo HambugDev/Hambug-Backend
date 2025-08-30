@@ -2,6 +2,7 @@ package com.hambug.Hambug.domain.oauth.apple;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +11,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.KeyFactory;
@@ -22,6 +22,7 @@ import java.util.Base64;
 import java.util.Date;
 
 @Slf4j
+@Getter
 @Component
 @RequiredArgsConstructor
 public class AppleClientSecretGenerator {

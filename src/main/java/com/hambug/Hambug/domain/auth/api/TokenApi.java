@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@Tag(name = "토큰 API", description = "JWT 토큰 재발급 및 로그아웃 관련 API")
+@Tag(name = "인증/인가 API", description = "JWT 토큰 재발급 및 로그아웃 관련 API")
 public interface TokenApi {
 
     @Operation(summary = "리프레시 토큰으로 액세스 토큰 재발급", description = "Authorization 헤더에 포함된 Bearer 리프레시 토큰으로 새 액세스 토큰을 발급합니다.")

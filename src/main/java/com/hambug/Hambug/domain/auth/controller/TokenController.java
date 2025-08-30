@@ -47,8 +47,7 @@ public class TokenController implements TokenApi {
 
     @PostMapping("/unlink")
     public CommonResponse<Boolean> unlink(@AuthenticationPrincipal PrincipalDetails principalDetails, Authentication authentication) {
-        Long userId = getUserId(principalDetails);
-        oauthUnlinkService.kakaoUnlink(userId, authentication);
+        oauthUnlinkService.unlink(principalDetails, authentication);
         return CommonResponse.ok(true);
     }
 

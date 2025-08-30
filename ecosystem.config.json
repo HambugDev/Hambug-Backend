@@ -3,7 +3,7 @@
     {
       "name": "hambug-back-dev",
       "script": "./gradlew",
-      "args": "bootRun",
+      "args": "bootRun -x test --no-daemon",
       "cwd": "/home/ec2-user/hambug-back",
       "exec_interpreter": "bash",
       "exec_mode": "fork",

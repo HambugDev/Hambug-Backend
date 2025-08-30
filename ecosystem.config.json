@@ -1,0 +1,19 @@
+{
+  "apps": [
+    {
+      "name": "hambug-back",
+      "script": "java",
+      "args": "-jar build/libs/Hambug-0.0.1.jar",
+      "cwd": "/home/ec2-user/hambug-back",
+      "instances": 1,
+      "exec_mode": "fork",
+      "watch": false,
+      "autorestart": true,
+      "max_memory_restart": "1G",
+      "env": {
+        "JAVA_HOME": "/usr/lib/jvm/java-17-amazon-corretto",
+        "SPRING_PROFILES_ACTIVE": "dev"
+      }
+    }
+  ]
+}

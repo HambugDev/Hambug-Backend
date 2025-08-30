@@ -1,5 +1,6 @@
 package com.hambug.Hambug.domain.auth.controller;
 
+import com.hambug.Hambug.domain.auth.api.TokenApi;
 import com.hambug.Hambug.domain.auth.service.JwtService;
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.global.response.CommonResponse;
@@ -13,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-public class TokenController {
+public class TokenController implements TokenApi {
 
     private static final String BEARER = "Bearer ";
     private final JwtService jwtService;
 
     @PostMapping("/refresh")
-    public CommonResponse<?> refreshToken(
+    public CommonResponse<String> refreshToken(
             @RequestHeader(value = "Authorization", required = false) String authorization
     ) {
         if (authorization == null || !authorization.startsWith(BEARER)) {
@@ -31,7 +32,7 @@ public class TokenController {
     }
 
     @PostMapping("/logout")
-    public CommonResponse<?> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public CommonResponse<Boolean> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
         jwtService.logout(userId);
         return CommonResponse.ok(true);

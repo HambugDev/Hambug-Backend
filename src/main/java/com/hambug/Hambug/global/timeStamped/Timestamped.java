@@ -1,5 +1,6 @@
 package com.hambug.Hambug.global.timeStamped;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,11 @@ public abstract class Timestamped {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
+    @Column(name = "deleted_at")
     protected LocalDateTime deletedAt;
+
+    public void markDeleted() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }
 

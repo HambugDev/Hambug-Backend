@@ -5,9 +5,11 @@ import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.timeStamped.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
+@Where(clause = "deleted_at is null")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +17,7 @@ import lombok.*;
 public class User extends Timestamped {
 
     @Column(name = "is_active")
+    @Builder.Default
     boolean isActive = false;
     @Id
     @Column(name = "user_id")

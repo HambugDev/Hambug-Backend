@@ -30,6 +30,8 @@ public class OAuth2UserProcessor {
     public UserDto processUser(OAuth2UserRequest userRequest) {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         Oauth2UserInfo userInfo;
+
+        log.info("여기로 접근 : ={}", userRequest);
         if (APPLE.equalsIgnoreCase(registrationId)) {
             Map<String, Object> attributes = extractAppleAttributes(userRequest);
             userInfo = userInfoFactory.createUserInfo(registrationId, attributes);

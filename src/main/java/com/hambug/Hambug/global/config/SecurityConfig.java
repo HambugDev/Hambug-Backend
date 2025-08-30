@@ -4,6 +4,7 @@ import com.hambug.Hambug.domain.oauth.apple.AppleAuthorizationCodeTokenResponseC
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2FailHandler;
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2SuccessHandler;
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2UserService;
+import com.hambug.Hambug.domain.oauth.service.CustomOidcUserService;
 import com.hambug.Hambug.global.security.JwtAuthenticationFilter;
 import com.hambug.Hambug.global.security.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class SecurityConfig {
     private final CustomOauth2FailHandler customOauth2FailHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final CustomOidcUserService customOidcUserService;
     private final AppleAuthorizationCodeTokenResponseClient appleTokenClient;
 
 
@@ -53,7 +55,10 @@ public class SecurityConfig {
 
         http.oauth2Login(oauth2 -> oauth2
                 .tokenEndpoint(token -> token.accessTokenResponseClient(appleTokenClient))
-                .userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService))
+                .userInfoEndpoint(userInfo -> userInfo
+                        .userService(customOauth2UserService)   // Kakao 등 OAuth2
+                        .oidcUserService(customOidcUserService) // Apple 등 OIDC
+                )
                 .successHandler(customOauth2SuccessHandler)
                 .failureHandler(customOauth2FailHandler)
         );

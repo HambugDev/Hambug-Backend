@@ -5,6 +5,7 @@ import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
 import com.hambug.Hambug.domain.user.entity.Role;
 import com.hambug.Hambug.domain.user.entity.User;
 import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,16 +29,17 @@ public class UserDto {
 
     Role role;
 
-    @JsonIgnore
+    // 게터에 숨김 적용
+    @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
     boolean isLogin;
 
-    @JsonIgnore
+    @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
     boolean isActive;
 
-    @JsonIgnore
+    @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
     String accessToken;
 
-    @JsonIgnore
+    @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
     String refreshToken;
 
     public static UserDto authUserDTO(User user) {

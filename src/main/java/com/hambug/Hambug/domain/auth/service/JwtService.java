@@ -4,6 +4,7 @@ import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
 import com.hambug.Hambug.domain.auth.entity.Token;
 import com.hambug.Hambug.domain.auth.repository.TokenRepository;
 import com.hambug.Hambug.domain.user.dto.UserDto;
+import com.hambug.Hambug.global.event.UserLogoutFcmEvent;
 import com.hambug.Hambug.global.exception.custom.JwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -13,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,7 @@ public class JwtService {
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
     private final TokenRepository tokenRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${jwt.issuer}")
     private String issuer;
@@ -67,6 +70,7 @@ public class JwtService {
     public void logout(Long userId) {
         Token token = tokenRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("토큰을 찾을수 없습니다."));
         tokenRepository.delete(token);
+        eventPublisher.publishEvent(new UserLogoutFcmEvent(userId));
     }
 
     @Transactional

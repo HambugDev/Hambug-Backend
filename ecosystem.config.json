@@ -5,6 +5,7 @@
       "script": "./gradlew",
       "args": "bootRun",
       "cwd": "/home/ec2-user/hambug-back",
+      "exec_interpreter": "bash",
       "exec_mode": "fork",
       "autorestart": true,
       "watch": false,

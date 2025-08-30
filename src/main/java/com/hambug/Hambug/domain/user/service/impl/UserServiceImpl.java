@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto signUpOrLogin(Oauth2UserInfo userInfo) {
-        return userRepository.findByEmail(userInfo.getEmail())
+        return userRepository.findByEmailAndLoginType(userInfo.getEmail(), userInfo.getLoginType())
                 .map(this::login)
                 .orElseGet(() -> register(userInfo));
     }

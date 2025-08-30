@@ -3,13 +3,11 @@ package com.hambug.Hambug.domain.auth.controller;
 import com.hambug.Hambug.domain.auth.api.TokenApi;
 import com.hambug.Hambug.domain.auth.service.JwtService;
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
+import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -36,6 +34,12 @@ public class TokenController implements TokenApi {
         Long userId = getUserId(principalDetails);
         jwtService.logout(userId);
         return CommonResponse.ok(true);
+    }
+
+    @GetMapping("/me")
+    public CommonResponse<UserDto> me(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        UserDto user = principalDetails.getUser();
+        return CommonResponse.ok(user);
     }
 
     private Long getUserId(PrincipalDetails principalDetails) {

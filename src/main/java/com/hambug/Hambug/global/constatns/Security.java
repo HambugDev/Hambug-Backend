@@ -35,5 +35,6 @@ public class Security {
     public static final String KAKAO = "kakao";
     public static final String GOOGLE = "google";
     public static final String NAVER = "naver";
+    public static final String APPLE = "apple";
 
 }

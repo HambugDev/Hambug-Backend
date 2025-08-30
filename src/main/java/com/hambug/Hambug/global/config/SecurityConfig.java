@@ -1,5 +1,6 @@
 package com.hambug.Hambug.global.config;
 
+import com.hambug.Hambug.domain.oauth.apple.AppleAuthorizationCodeTokenResponseClient;
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2FailHandler;
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2SuccessHandler;
 import com.hambug.Hambug.domain.oauth.service.CustomOauth2UserService;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final CustomOauth2FailHandler customOauth2FailHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final AppleAuthorizationCodeTokenResponseClient appleTokenClient;
 
 
     @Bean
@@ -50,6 +52,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         http.oauth2Login(oauth2 -> oauth2
+                .tokenEndpoint(token -> token.accessTokenResponseClient(appleTokenClient))
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService))
                 .successHandler(customOauth2SuccessHandler)
                 .failureHandler(customOauth2FailHandler)

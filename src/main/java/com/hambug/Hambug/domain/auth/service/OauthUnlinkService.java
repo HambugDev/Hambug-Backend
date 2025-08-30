@@ -56,7 +56,7 @@ public class OauthUnlinkService {
     }
 
     @Transactional
-    public void appleUnlink(Long userId, String refreshToken) {
+    public void appleUnlink(Long userId, String accessToken) {
         WebClient client = WebClient.builder()
                 .baseUrl("https://appleid.apple.com")
                 .build();
@@ -66,8 +66,8 @@ public class OauthUnlinkService {
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .bodyValue("client_id=" + clientSecretGenerator.getClientId()
                             + "&client_secret=" + clientSecretGenerator.generate()
-                            + "&token=" + refreshToken
-                            + "&token_type_hint=refresh_token")
+                            + "&token=" + accessToken
+                            + "&token_type_hint=access_token")
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();

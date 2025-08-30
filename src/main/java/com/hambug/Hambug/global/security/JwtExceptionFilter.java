@@ -3,6 +3,7 @@ package com.hambug.Hambug.global.security;
 import com.hambug.Hambug.global.response.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,6 +42,14 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
                     response,
                     ErrorCode.JWT_TOKEN_INVALID,
                     HttpStatus.UNAUTHORIZED,
+                    e
+            );
+        } catch (EntityNotFoundException e) {
+            securityResponseHandler.handleSecurityError(
+                    request,
+                    response,
+                    ErrorCode.NOT_FOUND_ENTITY,
+                    HttpStatus.NOT_FOUND,
                     e
             );
         } catch (Exception e) {

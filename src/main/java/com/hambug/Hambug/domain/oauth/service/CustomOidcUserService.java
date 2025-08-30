@@ -1,5 +1,6 @@
 package com.hambug.Hambug.domain.oauth.service;
 
+import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +22,9 @@ public class CustomOidcUserService extends OidcUserService {
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) {
         String regId = userRequest.getClientRegistration().getRegistrationId();
-        log.info("엥 : {}", userRequest);
         if (APPLE.equalsIgnoreCase(regId)) {
             UserDto userDto = userProcessor.processUser(userRequest);
-            return super.loadUser(userRequest);
+            return new PrincipalDetails(userDto);
         }
         return super.loadUser(userRequest);
     }

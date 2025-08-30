@@ -44,8 +44,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        validHeaderToken(header);
-        String jwtToken = header.replace(BEARER, "");
+        if (header == null || !header.startsWith(BEARER)) {
+            // No bearer token present: proceed without authentication
+            filterChain.doFilter(request, response);
+            return;
+        }
+        String jwtToken = header.substring(BEARER.length());
 
         if (jwtService.isTokenExpired(jwtToken)) {
             filterChain.doFilter(request, response);

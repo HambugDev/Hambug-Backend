@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Security {
     public static final List<String> WHITELISTED_URLS = List.of(
+            "/",
             "/favicon.ico", "/auth/**",
             "/oauth2/**", "/login/**", "/firebase-messaging-sw.js",
             "/favicon.ico",

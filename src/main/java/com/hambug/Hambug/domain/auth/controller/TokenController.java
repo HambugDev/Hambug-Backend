@@ -7,10 +7,12 @@ import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -41,6 +43,7 @@ public class TokenController implements TokenApi {
 
     @GetMapping("/me")
     public CommonResponse<UserDto> me(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        log.info("접근은함 :");
         UserDto user = principalDetails.getUser();
         return CommonResponse.ok(user);
     }

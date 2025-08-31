@@ -6,6 +6,7 @@ import com.hambug.Hambug.global.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -24,4 +25,10 @@ public interface TokenApi {
             security = {@SecurityRequirement(name = "bearerAuth")}
     )
     CommonResponse<UserDto> me(@AuthenticationPrincipal PrincipalDetails principalDetails);
+
+    @Operation(
+            summary = "회원 탈퇴",
+            description = "소셜로그인 회원 탈퇴"
+    )
+    CommonResponse<Boolean> unlink(@AuthenticationPrincipal PrincipalDetails principalDetails, Authentication authentication);
 }

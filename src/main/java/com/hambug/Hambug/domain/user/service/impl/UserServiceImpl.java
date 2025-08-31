@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
     private void validOwner(Long userId, Long authUserId) {
         if (!userId.equals(authUserId)) {
-            throw new JwtException(ErrorCode.JWT_TOKEN_INVALID, "작성자만 수정 가능합니다.");
+            throw new JwtException(ErrorCode.JWT_TOKEN_INVALID, "본인만 수정 가능합니다.");
         }
     }
 

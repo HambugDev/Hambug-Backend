@@ -11,6 +11,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ import static com.hambug.Hambug.global.response.ErrorCode.JWT_TOKEN_INVALID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class JwtService {
 
     private final PrivateKey privateKey;
@@ -72,6 +74,7 @@ public class JwtService {
         eventPublisher.publishEvent(new UserLogoutFcmEvent(userId));
     }
 
+    @Transactional
     public void softDelete(Long userId) {
         tokenRepository.findByUserId(userId).ifPresent(Timestamped::markDeleted);
     }
@@ -124,12 +127,11 @@ public class JwtService {
     }
 
     public Claims validateToken(String token) {
-        try {
-            return parseToken(token);
-        } catch (com.hambug.Hambug.global.exception.custom.JwtException e) {
-            log.warn("토큰 검증 실패: {}", e.getMessage());
-            throw e;
+        Claims claims = parseToken(token);
+        if (claims.get("type").equals("refresh")) {
+            tokenRepository.findByToken(token).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 토큰입니다."));
         }
+        return claims;
     }
 
     public Date getExpirationFromToken(String token) {

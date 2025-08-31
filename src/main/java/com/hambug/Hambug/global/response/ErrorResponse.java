@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,35 +16,22 @@ public class ErrorResponse {
     private boolean success;
     private String code;
     private String message;
-    private List<FieldError> errors;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
-    private ErrorResponse(ErrorCode errorCode, List<FieldError> errors) {
-        this.success = false;
-        this.code = errorCode.getCode();
-        this.message = errorCode.getMessage();
-        this.errors = errors;
-        this.timestamp = LocalDateTime.now();
-    }
 
     private ErrorResponse(ErrorCode errorCode) {
         this.success = false;
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
-        this.errors = new ArrayList<>();
         this.timestamp = LocalDateTime.now();
     }
 
     public static ErrorResponse of(ErrorCode errorCode) {
         return new ErrorResponse(errorCode);
     }
-
-    public static ErrorResponse of(ErrorCode errorCode, List<FieldError> errors) {
-        return new ErrorResponse(errorCode, errors);
-    }
-
+    
     public static ErrorResponse of(ErrorCode errorCode, String message) {
         ErrorResponse response = new ErrorResponse(errorCode);
         response.message = message;

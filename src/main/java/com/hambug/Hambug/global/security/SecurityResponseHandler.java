@@ -35,10 +35,7 @@ public class SecurityResponseHandler {
         response.setCharacterEncoding("UTF-8");
         response.setStatus(status.value());
 
-        ErrorResponse errorResponse = ErrorResponse.of(
-                errorCode,
-                request.getRequestURI()
-        );
+        ErrorResponse errorResponse = ErrorResponse.of(errorCode, exception.getMessage());
 
         objectMapper.writeValue(response.getWriter(), errorResponse);
     }

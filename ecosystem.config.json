@@ -1,0 +1,18 @@
+{
+  "apps": [
+    {
+      "name": "hambug-back",
+      "script": "java",
+      "args": "-Xms128m -Xmx256m -jar build/libs/Hambug-0.0.1.jar",
+      "cwd": "/home/ec2-user/hambug-back",
+      "instances": 1,
+      "exec_mode": "fork",
+      "watch": false,
+      "autorestart": true,
+      "max_memory_restart": "512M",
+      "env": {
+        "SPRING_PROFILES_ACTIVE": "dev"
+      }
+    }
+  ]
+}

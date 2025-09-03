@@ -4,6 +4,12 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+src/main/resources/*firebase*.json
+src/main/resources/*service-account*.json
+*firebase*.json
+*service-account*.json
+*.credentials.json
+*.secret.json
 
 ### STS ###
 .apt_generated
@@ -17,9 +23,17 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+*.pem
+*.p12
+*.key
+# allow tracked JWT keys used by the app
+!src/main/resources/keys/private.pem
+!src/main/resources/keys/public.pem
+src/main/resources/*
+
+
+# IDE and build
+/.idea/
 *.iml
 *.ipr
 out/
@@ -32,10 +46,3 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
-
-### VS Code ###
-.vscode/
-application.yml
-application.properties
-**/application-*.yml
-**/application.properties

@@ -10,6 +10,8 @@ public enum ErrorCode {
     JWT_TOKEN_MISSING("J003", "JWT 토큰이 누락되었습니다."),
     NOT_FOUND_ENTITY("COM001", "해당 엔티티를 찾을수 없습니다."),
     ALREADY_ENTITY("COM002", "해당 엔티티는 이미 존재합니다."),
+    BOARD_NOT_FOUND("B001", "게시글을 찾을 수 없습니다."),
+    UNAUTHORIZED_BOARD_ACCESS("B002", "게시글에 대한 권한이 없습니다."),
     SERVER_ERROR("S001", "서버 오류가 발생했습니다.");
 
     private final String code;

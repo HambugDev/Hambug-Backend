@@ -1,8 +1,8 @@
 package com.hambug.Hambug.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hambug.Hambug.global.response.ErrorCode;
-import com.hambug.Hambug.global.response.ErrorResponse;
+import com.hambug.Hambug.global.exception.ErrorCode;
+import com.hambug.Hambug.global.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +39,4 @@ public class SecurityResponseHandler {
 
         objectMapper.writeValue(response.getWriter(), errorResponse);
     }
-
 }

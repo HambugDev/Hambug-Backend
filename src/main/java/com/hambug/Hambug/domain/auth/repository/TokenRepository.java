@@ -13,6 +13,8 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
 
     Optional<Token> findByUserId(Long userId);
 
+    Optional<Token> findByAdminUserId(Long adminUserId);
+
     Optional<Token> findByToken(String token);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)

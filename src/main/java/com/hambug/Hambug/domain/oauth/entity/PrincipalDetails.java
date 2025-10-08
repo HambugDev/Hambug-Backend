@@ -1,5 +1,6 @@
 package com.hambug.Hambug.domain.oauth.entity;
 
+import com.hambug.Hambug.domain.admin.dto.AdminUserDto;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +16,8 @@ import java.util.*;
 public class PrincipalDetails implements OAuth2User, OidcUser {
 
     private final UserDto user;
-    
+    private final AdminUserDto admin;
+
     private final OidcIdToken idToken;
     private final OidcUserInfo userInfo;
     private final Map<String, Object> attributes;
@@ -24,8 +26,17 @@ public class PrincipalDetails implements OAuth2User, OidcUser {
         this(user, null, null, Collections.emptyMap());
     }
 
+    public PrincipalDetails(AdminUserDto admin) {
+        this.user = null;
+        this.admin = admin;
+        this.idToken = null;
+        this.userInfo = null;
+        this.attributes = Collections.emptyMap();
+    }
+
     public PrincipalDetails(UserDto user, OidcIdToken idToken, OidcUserInfo userInfo, Map<String, Object> attributes) {
         this.user = user;
+        this.admin = null;
         this.idToken = idToken;
         this.userInfo = userInfo;
         this.attributes = attributes == null
@@ -40,13 +51,26 @@ public class PrincipalDetails implements OAuth2User, OidcUser {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = user.getRole() != null ? user.getRole().name() : "ROLE_USER";
+        String role = null;
+        if (user != null && user.getRole() != null) {
+            role = user.getRole().name();
+        } else if (admin != null && admin.getRole() != null) {
+            role = admin.getRole().name();
+        } else {
+            role = (user != null) ? "ROLE_USER" : "ROLE_ADMIN";
+        }
         return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override
     public String getName() {
-        return user.getUserId() == null ? user.getName() : String.valueOf(user.getUserId());
+        if (user != null) {
+            return user.getUserId() == null ? user.getName() : String.valueOf(user.getUserId());
+        }
+        if (admin != null) {
+            return admin.getEmail() != null ? admin.getEmail() : admin.getName();
+        }
+        return "anonymous";
     }
 
     @Override
@@ -66,5 +90,9 @@ public class PrincipalDetails implements OAuth2User, OidcUser {
 
     public UserDto getUserDto() {
         return this.user;
+    }
+
+    public AdminUserDto getAdminDto() {
+        return this.admin;
     }
 }

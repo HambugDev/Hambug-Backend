@@ -49,7 +49,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                         .requestMatchers(WHITELISTED_URLS.toArray(String[]::new)).permitAll()
-                        .requestMatchers(ADMIN_PATH).hasRole(ADMIN_ROLE)
+                        .requestMatchers(ADMIN_PATH).hasAnyRole(ADMIN_ROLE, SUPER_ADMIN_ROLE)
+                        .requestMatchers(ONLY_SUPER_ADMIN_URLS.toArray(String[]::new)).hasAnyRole(SUPER_ADMIN_ROLE)
                         .requestMatchers(USER_PATH).hasAnyRole(USER_ROLE)
                         .anyRequest().authenticated());
 

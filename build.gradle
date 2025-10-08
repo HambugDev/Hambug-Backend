@@ -32,6 +32,8 @@ dependencies {
     implementation 'io.projectreactor:reactor-core:3.6.8'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework:spring-context-support:6.2.9'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
@@ -41,6 +43,7 @@ dependencies {
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3'
 

@@ -1,5 +1,7 @@
 package com.hambug.Hambug.global.security;
 
+import com.hambug.Hambug.domain.admin.dto.AdminUserDto;
+import com.hambug.Hambug.domain.admin.service.AdminUserService;
 import com.hambug.Hambug.domain.auth.service.JwtService;
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.domain.user.dto.UserDto;
@@ -31,6 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER = "Bearer ";
     private final JwtService jwtService;
     private final UserService userService;
+    private final AdminUserService adminUserService;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
@@ -74,9 +77,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void setAuthenticationContext(String token) {
         Claims claims = jwtService.parseToken(token);
         Long userId = Long.parseLong(claims.getSubject());
-        UserDto userDto = userService.getById(userId);
-        PrincipalDetails principalDetails = new PrincipalDetails(userDto);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        String role = claims.get("role") != null ? claims.get("role").toString() : null;
+        if ("ROLE_USER".equals(role)) {
+            UserDto userDto = userService.getById(userId);
+            PrincipalDetails principalDetails = new PrincipalDetails(userDto);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        } else {
+            log.info("컴ㅁㅁ오오온!");
+            AdminUserDto adminUserDto = adminUserService.getById(userId);
+            PrincipalDetails principalDetails = new PrincipalDetails(adminUserDto);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
+
     }
 }

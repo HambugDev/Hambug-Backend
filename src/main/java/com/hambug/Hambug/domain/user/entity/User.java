@@ -46,7 +46,7 @@ public class User extends Timestamped {
                 .name(userInfo.getName())
                 .nickname(nickname)
                 .loginType(userInfo.getLoginType())
-                .profileImageUrl("not yeet")
+                .profileImageUrl("https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/default_profile.svg")
                 .rank(Rank.HAM_BEGINNER)
                 .role(Role.ROLE_USER)
                 .isActive(true)

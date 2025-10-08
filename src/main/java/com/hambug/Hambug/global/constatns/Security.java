@@ -13,7 +13,7 @@ public class Security {
             "/js/**",
             "/images/**",
             "/webjars/**",
-            "/api/v1/tokens/**",
+            "/api/v1/auth/**",
             "/api/swagger-ui/**",
             "/api/swagger-ui.html",
             "/swagger-ui.html",
@@ -23,14 +23,23 @@ public class Security {
             "/swagger-resources/**",
             "/webjars/**",
             "/health",
-            "/actuator"
+            "/actuator",
+            "/admin/api/v1/register",
+            "/admin/api/v1/login",
+            "/api/v1/login/*",
+            "/login"
+    );
+
+    public static final List<String> ONLY_SUPER_ADMIN_URLS = List.of(
+            "/admin/api/v1/register/manager"
     );
 
     public static final String USER_PATH = "/api/v1/**";
-    public static final String ADMIN_PATH = "/api/v1/admin/**";
+    public static final String ADMIN_PATH = "/admin/api/v1/**";
 
     public static final String USER_ROLE = "USER";
     public static final String ADMIN_ROLE = "ADMIN";
+    public static final String SUPER_ADMIN_ROLE = "SUPER_ADMIN";
 
     public static final String KAKAO = "kakao";
     public static final String GOOGLE = "google";

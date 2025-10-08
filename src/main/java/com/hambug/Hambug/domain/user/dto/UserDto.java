@@ -80,6 +80,10 @@ public class UserDto {
         this.refreshToken = jwtTokenDto.getRefreshToken();
     }
 
+    public JwtTokenDto toJwtTokenDto() {
+        return JwtTokenDto.of(this.accessToken, this.refreshToken);
+    }
+
     public String userIdStr() {
         return String.valueOf(this.userId);
     }

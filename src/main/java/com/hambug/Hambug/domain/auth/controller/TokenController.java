@@ -43,7 +43,6 @@ public class TokenController implements TokenApi {
 
     @GetMapping("/me")
     public CommonResponse<UserDto> me(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        log.info("접근은함 :");
         UserDto user = principalDetails.getUser();
         return CommonResponse.ok(user);
     }

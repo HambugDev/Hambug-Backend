@@ -1,6 +1,6 @@
 package com.hambug.Hambug.global.exception.custom;
 
-import com.hambug.Hambug.global.response.ErrorCode;
+import com.hambug.Hambug.global.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter

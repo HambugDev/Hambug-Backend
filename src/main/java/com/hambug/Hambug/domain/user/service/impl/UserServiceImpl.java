@@ -9,7 +9,7 @@ import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.exception.custom.AlreadyEntityException;
 import com.hambug.Hambug.global.exception.custom.JwtException;
-import com.hambug.Hambug.global.response.ErrorCode;
+import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.s3.service.S3Service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

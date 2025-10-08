@@ -1,5 +1,7 @@
 package com.hambug.Hambug.domain.oauth.controller;
 
+import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.oauth.api.Oauth2Api;
 import com.hambug.Hambug.domain.oauth.dto.Oauth2RequestDTO;
 import com.hambug.Hambug.domain.oauth.service.Oauth2ServiceFactory;
 import com.hambug.Hambug.domain.user.dto.UserDto;
@@ -13,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/login")
 @RequiredArgsConstructor
 @Slf4j
-public class LoginController {
+public class LoginController implements Oauth2Api {
 
     private final Oauth2ServiceFactory oauth2ServiceFactory;
 
     @PostMapping("/{provider}")
-    public CommonResponse<?> kakaoLogin(@PathVariable String provider, @RequestBody @Valid Oauth2RequestDTO.LoginAuthCode payload) {
+    public CommonResponse<JwtTokenDto> login(@PathVariable String provider, @RequestBody @Valid Oauth2RequestDTO.LoginAuthCode payload) {
         UserDto userDto = oauth2ServiceFactory.getService(provider).login(payload.authorizationCode());
         return CommonResponse.ok(userDto.toJwtTokenDto());
     }

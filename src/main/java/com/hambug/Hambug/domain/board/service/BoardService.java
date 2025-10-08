@@ -10,7 +10,7 @@ import com.hambug.Hambug.domain.board.exception.UnauthorizedBoardAccessException
 import com.hambug.Hambug.domain.board.repository.BoardRepository;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
-import com.hambug.Hambug.global.response.ErrorCode;
+import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

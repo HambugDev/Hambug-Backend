@@ -6,6 +6,7 @@ import com.hambug.Hambug.domain.oauth.apple.AppleClientSecretGenerator;
 import com.hambug.Hambug.domain.oauth.service.impl.AppleUserInfo;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -91,15 +92,13 @@ public class AppleOauth2Service implements Oauth2Service {
     }
 
     // Minimal DTO for Apple's token endpoint
+    @Data
     private static class AppleTokenResponse {
         private String access_token;
         private String token_type;
         private Long expires_in;
         private String refresh_token;
         private String id_token;
-
-        public String getIdToken() {
-            return id_token;
-        }
+        
     }
 }

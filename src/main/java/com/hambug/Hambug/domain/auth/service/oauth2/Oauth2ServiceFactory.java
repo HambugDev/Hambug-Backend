@@ -1,4 +1,4 @@
-package com.hambug.Hambug.domain.oauth.service;
+package com.hambug.Hambug.domain.auth.service.oauth2;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

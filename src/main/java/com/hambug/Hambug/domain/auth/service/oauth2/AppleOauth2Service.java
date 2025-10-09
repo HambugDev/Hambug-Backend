@@ -1,4 +1,4 @@
-package com.hambug.Hambug.domain.oauth.service;
+package com.hambug.Hambug.domain.auth.service.oauth2;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,12 +31,23 @@ public class AppleOauth2Service implements Oauth2Service {
     @Value("${spring.security.oauth2.client.registration.apple.redirect-uri:}")
     private String redirectUri; // optional
 
+    private static Map<String, Object> decodeIdToken(String idToken) {
+        try {
+            String[] parts = idToken.split("\\.");
+            if (parts.length < 2) throw new IllegalArgumentException("Invalid id_token");
+            byte[] payload = Base64.getUrlDecoder().decode(parts[1]);
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(payload, new TypeReference<Map<String, Object>>() {
+            });
+        } catch (Exception e) {
+            throw new IllegalStateException("애플 id_token 파싱 실패: " + e.getMessage(), e);
+        }
+    }
+
     @Override
     public UserDto login(String authorizationCode) {
-        // 1) Generate client_secret (JWT) for Apple
         String clientSecret = clientSecretGenerator.generate();
 
-        // 2) Request token from Apple
         BodyInserters.FormInserter<String> form = BodyInserters
                 .fromFormData("grant_type", "authorization_code")
                 .with("code", authorizationCode)
@@ -55,7 +66,6 @@ public class AppleOauth2Service implements Oauth2Service {
                 .bodyToMono(AppleTokenResponse.class)
                 .block();
 
-        // 3) Decode id_token to extract user info
         String idToken = Objects.requireNonNull(token, "Apple token response is null").getIdToken();
         Map<String, Object> claims = decodeIdToken(idToken);
 
@@ -65,25 +75,17 @@ public class AppleOauth2Service implements Oauth2Service {
             attributes.put("email", claims.get("email"));
         }
 
-        // 4) Sign up or login our user and return UserDto
         return userService.signUpOrLogin(new AppleUserInfo(attributes));
+    }
+
+    @Override
+    public void unlink(Long userId) {
+
     }
 
     @Override
     public String getProviderName() {
         return "apple";
-    }
-
-    private static Map<String, Object> decodeIdToken(String idToken) {
-        try {
-            String[] parts = idToken.split("\\.");
-            if (parts.length < 2) throw new IllegalArgumentException("Invalid id_token");
-            byte[] payload = Base64.getUrlDecoder().decode(parts[1]);
-            ObjectMapper om = new ObjectMapper();
-            return om.readValue(payload, new TypeReference<Map<String, Object>>() {});
-        } catch (Exception e) {
-            throw new IllegalStateException("애플 id_token 파싱 실패: " + e.getMessage(), e);
-        }
     }
 
     // Minimal DTO for Apple's token endpoint

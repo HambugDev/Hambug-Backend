@@ -1,4 +1,4 @@
-package com.hambug.Hambug.domain.oauth.dto;
+package com.hambug.Hambug.domain.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

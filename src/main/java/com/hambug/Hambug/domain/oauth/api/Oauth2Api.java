@@ -1,7 +1,7 @@
 package com.hambug.Hambug.domain.oauth.api;
 
 import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
-import com.hambug.Hambug.domain.oauth.dto.Oauth2RequestDTO;
+import com.hambug.Hambug.domain.auth.dto.Oauth2RequestDTO;
 import com.hambug.Hambug.global.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

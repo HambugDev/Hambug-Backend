@@ -1,4 +1,4 @@
-package com.hambug.Hambug.domain.oauth.dto;
+package com.hambug.Hambug.domain.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hambug.Hambug.domain.oauth.service.Oauth2UserInfo;
@@ -66,5 +66,23 @@ public class KakaoUserResponse implements Oauth2UserInfo {
         private String profileImageUrl;
         @JsonProperty("thumbnail_image_url")
         private String thumbnailImageUrl;
+    }
+
+    @Getter
+    @ToString
+    public static class TokenResponse {
+        @JsonProperty("token_type")
+        private String tokenType;
+        @JsonProperty("access_token")
+        private String accessToken;
+        @JsonProperty("expires_in")
+        private Long expiresIn;
+        @JsonProperty("refresh_token")
+        private String refreshToken;
+        @JsonProperty("refresh_token_expires_in")
+        private Long refreshTokenExpiresIn;
+        @JsonProperty("scope")
+        private String scope;
+        
     }
 }

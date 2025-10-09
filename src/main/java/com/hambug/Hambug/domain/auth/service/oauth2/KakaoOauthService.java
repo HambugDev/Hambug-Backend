@@ -2,7 +2,6 @@ package com.hambug.Hambug.domain.auth.service.oauth2;
 
 import com.hambug.Hambug.domain.auth.dto.KakaoUserResponse;
 import com.hambug.Hambug.domain.auth.service.JwtService;
-import com.hambug.Hambug.domain.auth.service.OAuthService;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ public class KakaoOauthService implements Oauth2Service {
     private final WebClient webClient = WebClient.builder().build();
     private final UserService userService;
     private final JwtService jwtService;
-    private final OAuthService oAuthService;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String kakaoClientId;

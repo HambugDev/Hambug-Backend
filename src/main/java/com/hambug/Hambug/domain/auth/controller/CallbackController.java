@@ -1,9 +1,9 @@
 package com.hambug.Hambug.domain.auth.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -13,5 +13,19 @@ public class CallbackController {
     @GetMapping("/apple")
     public void appleCallback() {
         log.info("apple callback");
+    }
+
+    @PostMapping("/apple")
+    public void appleCallback(@RequestParam Map<String, String> body) {
+        log.info(" Apple callback received: {}", body);
+        String code = body.get("code");
+        String idToken = body.get("id_token");
+        String state = body.get("state");
+        String user = body.get("user"); // JSON 문자열로 들어옴
+
+        log.info("code: {}", code);
+        log.info("idToken: {}", idToken);
+        log.info("state: {}", state);
+        log.info("user: {}", user);
     }
 }

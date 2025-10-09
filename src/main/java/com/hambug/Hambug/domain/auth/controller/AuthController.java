@@ -84,11 +84,6 @@ public class AuthController implements AuthApi {
         return CommonResponse.ok(userDto.toJwtTokenDto());
     }
 
-    @GetMapping("/callback")
-    public void callback() {
-        log.info("여기로 접근합니가?");
-    }
-
     private Long getUserId(PrincipalDetails principalDetails) {
         return principalDetails.getUser().getUserId();
     }

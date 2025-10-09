@@ -53,7 +53,7 @@ public class JwtService {
 
     @Transactional
     public String getRefreshToken(UserDto userDto) {
-        return tokenRepository.findByUserId(userDto.getUserId())
+        return tokenRepository.findByUserIdAndType(userDto.getUserId(), TokenType.REFRESH_TOKEN)
                 .map(existing -> {
                     if (isTokenExpired(existing.getToken())) {
                         Result result = buildRefreshJwt(userDto);
@@ -257,10 +257,9 @@ public class JwtService {
     }
 
     public String getAppleRefreshToken(Long userId) {
-        return tokenRepository.findByUserId(userId)
-                .filter(token -> token.getType() == TokenType.APPLE_REFRESH_TOKEN) // 타입이 APPLE_REFRESH_TOKEN인지 확인
-                .map(Token::getToken) // 실제 토큰 문자열로 매핑
-                .orElseThrow(() -> new IllegalStateException("Apple 리프레시 토큰을 찾을 수 없거나 만료되었습니다."));
+        return tokenRepository.findByUserIdAndType(userId, TokenType.APPLE_REFRESH_TOKEN)
+                .map(Token::getToken)
+                .orElseThrow(() -> new EntityNotFoundException("토큰을 찾을수 없습니다."));
     }
 
     private record Result(String jwtToken, LocalDateTime expiredAt) {

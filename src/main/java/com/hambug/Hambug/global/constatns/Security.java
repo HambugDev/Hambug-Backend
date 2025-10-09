@@ -30,7 +30,7 @@ public class Security {
             "/admin/api/v1/login",
             "/api/v1/login/*",
             "/login",
-            "/login/callback/code/**"
+            "/login/oauth2/code/**"
     );
 
     public static final List<String> ONLY_SUPER_ADMIN_URLS = List.of(

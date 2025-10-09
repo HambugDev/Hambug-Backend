@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RestController("/login/callback/code")
+@RestController("/login/oauth2/code")
 public class CallbackController {
 
     @GetMapping("/apple")

@@ -28,8 +28,8 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import static com.hambug.Hambug.global.response.ErrorCode.JWT_TOKEN_EXPIRED;
-import static com.hambug.Hambug.global.response.ErrorCode.JWT_TOKEN_INVALID;
+import static com.hambug.Hambug.global.exception.ErrorCode.JWT_TOKEN_EXPIRED;
+import static com.hambug.Hambug.global.exception.ErrorCode.JWT_TOKEN_INVALID;
 
 @Slf4j
 @Service

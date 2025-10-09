@@ -1,6 +1,7 @@
-package com.hambug.Hambug.global.response;
+package com.hambug.Hambug.global.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hambug.Hambug.global.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

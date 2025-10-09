@@ -4,16 +4,16 @@ import com.hambug.Hambug.global.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class JwtException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
 
     private final ErrorCode errorCode;
 
-    public JwtException(ErrorCode errorCode) {
+    public NotFoundException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 
-    public JwtException(ErrorCode errorCode, String message) {
+    public NotFoundException(ErrorCode errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
     }

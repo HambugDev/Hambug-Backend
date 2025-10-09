@@ -1,6 +1,6 @@
 package com.hambug.Hambug.global.security;
 
-import com.hambug.Hambug.global.response.ErrorCode;
+import com.hambug.Hambug.global.exception.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.persistence.EntityNotFoundException;

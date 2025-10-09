@@ -104,6 +104,7 @@ public class KakaoOauthService implements Oauth2Service {
     }
 
     private BodyInserters.FormInserter<String> getStringFormInserter(String code) {
+        log.debug("카카오톡 redirect_uri: {}", kakaoRedirectUri);
         return BodyInserters
                 .fromFormData("grant_type", "authorization_code")
                 .with("client_id", kakaoClientId)

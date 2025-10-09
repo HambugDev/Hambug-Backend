@@ -69,8 +69,7 @@ public class AppleOauth2Service implements Oauth2Service {
 
         log.info("Apple token response: {}", token);
 
-        String idToken = Objects.requireNonNull(token, "Apple token response is null").getIdToken();
-        Map<String, Object> claims = decodeIdToken(idToken);
+        Map<String, Object> claims = decodeIdToken(Objects.requireNonNull(token).id_token);
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("sub", claims.get("sub"));
@@ -99,6 +98,6 @@ public class AppleOauth2Service implements Oauth2Service {
         private Long expires_in;
         private String refresh_token;
         private String id_token;
-        
+
     }
 }

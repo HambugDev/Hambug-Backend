@@ -66,6 +66,8 @@ public class AppleOauth2Service implements Oauth2Service {
                 .bodyToMono(AppleTokenResponse.class)
                 .block();
 
+        log.debug("Apple token response: {}", token);
+
         String idToken = Objects.requireNonNull(token, "Apple token response is null").getIdToken();
         Map<String, Object> claims = decodeIdToken(idToken);
 

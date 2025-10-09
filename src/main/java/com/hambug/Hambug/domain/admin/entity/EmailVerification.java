@@ -50,4 +50,19 @@ public class EmailVerification {
         this.code = String.format("%06d", (int) (Math.random() * 1000000));
         return this.code;
     }
+
+    public boolean isVerified(String code) {
+        if (this.expiredAt.isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        return !this.isVerified && this.code.equals(code);
+    }
+
+    public boolean isVerified() {
+        return this.isVerified;
+    }
+
+    public void markVerified() {
+        this.isVerified = true;
+    }
 }

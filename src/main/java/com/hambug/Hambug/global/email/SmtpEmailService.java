@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -24,8 +25,10 @@ public class SmtpEmailService implements EmailService {
     private String from;
 
     @Override
+    @Async("mailExecutor")
     public void sendEmail(EmailMessage message) {
         try {
+            log.info("에에에ㅔㅇ?");
             MimeMessage mime = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mime, true, StandardCharsets.UTF_8.name());
             helper.setFrom(from);
@@ -38,6 +41,7 @@ public class SmtpEmailService implements EmailService {
             }
             helper.setSubject(message.getSubject());
             helper.setText(message.getBody(), message.isHtml());
+            log.info("여기까지는 오는거지?");
             mailSender.send(mime);
         } catch (MessagingException e) {
             log.error("[EMAIL][SMTP] MessagingException while sending email: {}", e.getMessage(), e);

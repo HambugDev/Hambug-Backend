@@ -2,6 +2,7 @@ package com.hambug.Hambug.domain.auth.service.oauth2;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hambug.Hambug.domain.auth.service.JwtService;
 import com.hambug.Hambug.domain.oauth.apple.AppleClientSecretGenerator;
 import com.hambug.Hambug.domain.oauth.service.impl.AppleUserInfo;
 import com.hambug.Hambug.domain.user.dto.UserDto;
@@ -27,6 +28,7 @@ public class AppleOauth2Service implements Oauth2Service {
 
     private final WebClient webClient = WebClient.builder().build();
     private final UserService userService;
+    private final JwtService jwtService;
     private final AppleClientSecretGenerator clientSecretGenerator;
 
     @Value("${spring.security.oauth2.client.registration.apple.redirect-uri:}")
@@ -86,7 +88,23 @@ public class AppleOauth2Service implements Oauth2Service {
 
     @Override
     public void unlink(Long userId) {
+        String appleRefreshToken = jwtService.getAppleRefreshToken(userId);
+        String clientSecret = clientSecretGenerator.generate();
+        webClient.post()
+                .uri("https://appleid.apple.com/auth/revoke")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters
+                        .fromFormData("client_id", clientSecretGenerator.getClientId())
+                        .with("client_secret", clientSecret)
+                        .with("token", appleRefreshToken)
+                        .with("token_type_hint", "refresh_token")
+                )
+                .retrieve()
+                .toBodilessEntity()
+                .block();
 
+        userService.softDeleteUser(userId);
+        jwtService.softDelete(userId);
     }
 
     @Override

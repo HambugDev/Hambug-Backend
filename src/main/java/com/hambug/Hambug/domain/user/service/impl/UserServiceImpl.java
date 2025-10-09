@@ -100,13 +100,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.save(User.of(userInfo, generateRandomNickname()));
         UserDto userDto = UserDto.authUserDTO(user);
         userDto.addTokens(jwtService.generateTokens(userDto));
-        log.info("여기까지는 실행이 잘됩니다.");
-        try {
-            jwtService.socialRefreshToken(userInfo, userDto);
-        } catch (Exception e) {
-            log.info("여기서 문제가 발생하겠죠..?");
-        }
-        
+        jwtService.socialRefreshToken(userInfo, userDto);
         return userDto;
     }
 

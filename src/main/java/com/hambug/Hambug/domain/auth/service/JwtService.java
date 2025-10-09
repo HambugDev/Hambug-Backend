@@ -2,12 +2,12 @@ package com.hambug.Hambug.domain.auth.service;
 
 import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
 import com.hambug.Hambug.domain.auth.entity.Token;
+import com.hambug.Hambug.domain.auth.entity.TokenType;
 import com.hambug.Hambug.domain.auth.repository.TokenRepository;
 import com.hambug.Hambug.domain.oauth.service.Oauth2UserInfo;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.event.UserLogoutFcmEvent;
 import com.hambug.Hambug.global.exception.custom.JwtException;
-import com.hambug.Hambug.global.timeStamped.Timestamped;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -90,7 +90,8 @@ public class JwtService {
 
     @Transactional
     public void softDelete(Long userId) {
-        tokenRepository.findByUserId(userId).ifPresent(Timestamped::markDeleted);
+        tokenRepository.findAllByUserId(userId)
+                .forEach(Token::markDeleted);
     }
 
     @Transactional
@@ -253,6 +254,13 @@ public class JwtService {
 
         LocalDateTime expiredAt = LocalDateTime.ofInstant(expiry, ZoneId.systemDefault());
         return new Result(jwtToken, expiredAt);
+    }
+
+    public String getAppleRefreshToken(Long userId) {
+        return tokenRepository.findByUserId(userId)
+                .filter(token -> token.getType() == TokenType.APPLE_REFRESH_TOKEN) // 타입이 APPLE_REFRESH_TOKEN인지 확인
+                .map(Token::getToken) // 실제 토큰 문자열로 매핑
+                .orElseThrow(() -> new IllegalStateException("Apple 리프레시 토큰을 찾을 수 없거나 만료되었습니다."));
     }
 
     private record Result(String jwtToken, LocalDateTime expiredAt) {

@@ -76,6 +76,10 @@ public class AppleOauth2Service implements Oauth2Service {
         if (claims.get("email") != null) {
             attributes.put("email", claims.get("email"));
         }
+        // Include provider refresh_token so it can be persisted
+        if (token != null && token.refresh_token != null) {
+            attributes.put("refresh_token", token.refresh_token);
+        }
 
         return userService.signUpOrLogin(new AppleUserInfo(attributes));
     }

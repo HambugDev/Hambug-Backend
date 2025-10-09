@@ -53,7 +53,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
                     e
             );
         } catch (Exception e) {
-            log.error("필터에서 예상치 못한 오류가 발생했습니다: {}", e.getMessage(), e);
+//            log.error("필터에서 예상치 못한 오류가 발생했습니다: {}", e.getMessage(), e);
             securityResponseHandler.handleSecurityError(
                     request,
                     response,

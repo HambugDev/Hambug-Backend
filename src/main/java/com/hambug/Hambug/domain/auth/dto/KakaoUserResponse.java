@@ -21,6 +21,8 @@ public class KakaoUserResponse implements Oauth2UserInfo {
     @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
 
+    private TokenResponse token;
+
     @Override
     public String getId() {
         return String.valueOf(id);
@@ -39,6 +41,15 @@ public class KakaoUserResponse implements Oauth2UserInfo {
     @Override
     public LoginType getLoginType() {
         return LoginType.KAKAO;
+    }
+
+    @Override
+    public String getRefreshToken() {
+        return token.getRefreshToken();
+    }
+
+    public void addToken(TokenResponse token) {
+        this.token = token;
     }
 
     @Getter
@@ -83,6 +94,6 @@ public class KakaoUserResponse implements Oauth2UserInfo {
         private Long refreshTokenExpiresIn;
         @JsonProperty("scope")
         private String scope;
-        
+
     }
 }

@@ -10,9 +10,9 @@ import java.util.Map;
 @RequestMapping("/login/oauth2/code")
 public class CallbackController {
 
-    @GetMapping("/apple")
-    public void appleCallback() {
-        log.info("apple callback");
+    @GetMapping("/kakao")
+    public void kakaoCallback(@RequestParam("code") String code) {
+        log.info("💬 Kakao callback code = {}", code);
     }
 
     @PostMapping("/apple")

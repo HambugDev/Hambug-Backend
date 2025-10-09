@@ -41,6 +41,8 @@ public class KakaoOauthService implements Oauth2Service {
         // 1) 액세스 토큰 요청
         TokenResponse token = getTokenResponse(code);
 
+        log.info("토킁느 : {}", token);
+
         KakaoUserResponse me = webClient.get()
                 .uri("https://kapi.kakao.com/v2/user/me")
                 .headers(h -> h.setBearerAuth(Objects.requireNonNull(token).getAccessToken()))
@@ -48,6 +50,8 @@ public class KakaoOauthService implements Oauth2Service {
                 .retrieve()
                 .bodyToMono(KakaoUserResponse.class)
                 .block();
+        
+        Objects.requireNonNull(me).addToken(token);
         return userService.signUpOrLogin(me);
     }
 

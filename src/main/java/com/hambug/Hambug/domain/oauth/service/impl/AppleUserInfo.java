@@ -49,4 +49,10 @@ public class AppleUserInfo implements Oauth2UserInfo {
     public LoginType getLoginType() {
         return LoginType.APPLE;
     }
+
+    @Override
+    public String getRefreshToken() {
+        Object rt = attributes.get("refresh_token");
+        return rt == null ? null : String.valueOf(rt);
+    }
 }

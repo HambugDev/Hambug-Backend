@@ -3,6 +3,7 @@ package com.hambug.Hambug.domain.auth.service;
 import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
 import com.hambug.Hambug.domain.auth.entity.Token;
 import com.hambug.Hambug.domain.auth.repository.TokenRepository;
+import com.hambug.Hambug.domain.oauth.service.Oauth2UserInfo;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.global.event.UserLogoutFcmEvent;
 import com.hambug.Hambug.global.exception.custom.JwtException;
@@ -207,6 +208,12 @@ public class JwtService {
             log.error("JWT 토큰 파싱 실패: {}", e.getMessage());
             throw new com.hambug.Hambug.global.exception.custom.JwtException(JWT_TOKEN_INVALID);
         }
+    }
+
+    @Transactional
+    public void socialRefreshToken(Oauth2UserInfo userInfo, UserDto userDto) {
+        tokenRepository.save(Token.socialOf(userInfo, userDto));
+
     }
 
     private Result buildRefreshJwt(UserDto userDto) {

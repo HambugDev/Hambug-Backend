@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.hambug.Hambug.domain.admin.dto.AdminUserReqDTO.AdminLogin;
 import static com.hambug.Hambug.domain.admin.dto.AdminUserReqDTO.RegisterAdminUser;
 
-@RequestMapping("/admin/api/v1")
+@RequestMapping("/admin/api/v1/auth")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class AdminController implements AdminApi {
+public class AdminAuthController implements AdminApi {
 
     private final AdminUserService userService;
 

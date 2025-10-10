@@ -26,13 +26,13 @@ public class Security {
             "/webjars/**",
             "/health",
             "/actuator",
-            "/admin/api/v1/register",
-            "/admin/api/v1/login",
+            "/admin/api/v1/auth/register",
+            "/admin/api/v1/auth/login",
             "/api/v1/login/*",
             "/login",
             "/login/oauth2/code/**",
-            "/admin/api/v1/send-email",
-            "/admin/api/v1/verification-email"
+            "/admin/api/v1/auth/send-email",
+            "/admin/api/v1/auth/verification-email"
     );
 
     public static final List<String> ONLY_SUPER_ADMIN_URLS = List.of(

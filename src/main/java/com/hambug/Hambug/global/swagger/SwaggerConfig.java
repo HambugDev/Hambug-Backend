@@ -21,7 +21,9 @@ public class SwaggerConfig {
                 .description("Hambug Production API (HTTPS)");
 
         SecurityScheme accessTokenScheme = new SecurityScheme()
-                .type(SecurityScheme.Type.APIKEY)       // Authorization header로 받기
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER)
                 .name("Authorization")
                 .description("Access Token을 입력하세요. (예: `Bearer eyJhbGciOi...`)");
@@ -30,7 +32,7 @@ public class SwaggerConfig {
                 .type(SecurityScheme.Type.APIKEY)
                 .in(SecurityScheme.In.HEADER)
                 .name("RefreshToken")
-                .description("Refresh Token을 입력하세요.");
+                .description("Refresh Token을 입력하세요. (선택)");
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
                 .addList("Authorization")
@@ -40,13 +42,11 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Hambug API 명세서")
                         .description("Hambug 서비스의 REST API 문서입니다.")
-                        .version("v1")
-                )
+                        .version("v1"))
                 .servers(List.of(httpsServer))
                 .components(new Components()
                         .addSecuritySchemes("Authorization", accessTokenScheme)
-                        .addSecuritySchemes("RefreshToken", refreshTokenScheme)
-                )
+                        .addSecuritySchemes("RefreshToken", refreshTokenScheme))
                 .addSecurityItem(securityRequirement);
     }
 }

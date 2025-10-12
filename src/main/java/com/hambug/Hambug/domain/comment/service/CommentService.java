@@ -2,6 +2,7 @@ package com.hambug.Hambug.domain.comment.service;
 
 import com.hambug.Hambug.domain.board.entity.Board;
 import com.hambug.Hambug.domain.board.repository.BoardRepository;
+import com.hambug.Hambug.domain.board.service.trending.BoardTrendingService;
 import com.hambug.Hambug.domain.comment.dto.CommentRequestDTO;
 import com.hambug.Hambug.domain.comment.dto.CommentResponseDTO;
 import com.hambug.Hambug.domain.comment.entity.Comment;
@@ -23,6 +24,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final BoardTrendingService boardTrendingService;
 
     @Transactional(readOnly = true)
     public List<CommentResponseDTO.CommentResponse> findCommentsByBoard(Long boardId) {
@@ -37,6 +39,9 @@ public class CommentService {
         Board board = findBoard(boardId);
         Comment comment = new Comment(request.content(), board);
         commentRepository.save(comment);
+
+        boardTrendingService.addCommentScore(boardId);
+
         return new CommentResponseDTO.CommentResponse(comment);
     }
 

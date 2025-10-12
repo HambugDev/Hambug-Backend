@@ -51,9 +51,13 @@ public class BoardService {
         return new BoardResponseDTO.BoardResponse(board);
     }
 
+    @Transactional
     public BoardResponseDTO.BoardResponse findBoardById(Long id, Long userId) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
+
+        // 조회수 증가
+        board.incrementViewCount();
 
         long likeCount = boardLikeRepository.countByBoardId(id);
         boolean isLiked = false;

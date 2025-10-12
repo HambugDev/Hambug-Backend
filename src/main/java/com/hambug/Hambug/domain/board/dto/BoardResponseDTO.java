@@ -20,6 +20,7 @@ public class BoardResponseDTO {
             Long authorId,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
+            Long viewCount,
             Long likeCount,
             Boolean isLiked
     ) {
@@ -34,6 +35,7 @@ public class BoardResponseDTO {
                     board.getUser().getId(),
                     board.getCreatedAt(),
                     board.getModifiedAt(),
+                    board.getViewCount(),
                     0L,
                     false
             );
@@ -50,6 +52,7 @@ public class BoardResponseDTO {
                     board.getUser().getId(),
                     board.getCreatedAt(),
                     board.getModifiedAt(),
+                    board.getViewCount(),
                     likeCount,
                     isLiked
             );

@@ -20,10 +20,6 @@ public class UserDto {
 
     Long userId;
 
-    String email;
-
-    String name;
-
     String nickname;
 
     String profileImageUrl;
@@ -31,6 +27,8 @@ public class UserDto {
     LoginType loginType;
 
     Role role;
+
+    Boolean isRegister;
 
     // 게터에 숨김 적용
     @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
@@ -48,13 +46,14 @@ public class UserDto {
     @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
     String refreshToken;
 
-    public static UserDto authUserDTO(User user) {
+    public static UserDto authUserDTO(User user, Boolean isRegister) {
         return UserDto.builder()
                 .userId(user.getId())
-                .name(user.getName())
                 .nickname(user.getNickname())
-                .email(user.getEmail())
+                .loginType(user.getLoginType())
+                .profileImageUrl(user.getProfileImageUrl())
                 .role(user.getRole())
+                .isRegister(isRegister)
                 .isActive(user.isActive()).build();
     }
 
@@ -69,11 +68,9 @@ public class UserDto {
     public static UserDto toDto(User user) {
         return UserDto.builder()
                 .userId(user.getId())
-                .name(user.getName())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
                 .loginType(user.getLoginType())
-                .email(user.getEmail())
                 .socialId(user.getSocialId())
                 .role(user.getRole())
                 .isActive(user.isActive()).build();

@@ -19,7 +19,7 @@ import static com.hambug.Hambug.domain.user.dto.UserRequestDto.UpdateUserNicknam
 public interface UserApi {
 
     @Operation(summary = "회원 정보 조회", description = "회원 ID로 회원 정보를 조회합니다.")
-    CommonResponse<UserDto> getUsers(@PathVariable("id") Long id);
+    CommonResponse<UserDto> getUsers(@PathVariable("id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails);
 
     @Operation(summary = "닉네임 변경", description = "본인 인증을 거친 뒤 닉네임을 변경합니다.")
     CommonResponse<UserDto> updateNickName(@PathVariable("id") Long id,

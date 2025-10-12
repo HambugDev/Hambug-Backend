@@ -92,14 +92,14 @@ public class BoardService {
                 .imageUrls(request.imageUrls())
                 .user(user)
                 .build();
-        
+
         boardRepository.save(board);
         return new BoardResponseDTO.BoardResponse(board);
     }
 
     @Transactional
-    public BoardResponseDTO.BoardResponse createBoardWithImages(BoardRequestDTO.BoardCreateRequest request, 
-                                                               List<MultipartFile> images, Long userId) {
+    public BoardResponseDTO.BoardResponse createBoardWithImages(BoardRequestDTO.BoardCreateRequest request,
+                                                                List<MultipartFile> images, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
@@ -125,7 +125,7 @@ public class BoardService {
                 .imageUrls(imageUrls)
                 .user(user)
                 .build();
-        
+
         boardRepository.save(board);
         return new BoardResponseDTO.BoardResponse(board);
     }
@@ -144,8 +144,8 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponseDTO.BoardResponse updateBoardWithImages(Long id, BoardRequestDTO.BoardUpdateRequest request, 
-                                                               List<MultipartFile> images, Long userId) {
+    public BoardResponseDTO.BoardResponse updateBoardWithImages(Long id, BoardRequestDTO.BoardUpdateRequest request,
+                                                                List<MultipartFile> images, Long userId) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
@@ -184,6 +184,12 @@ public class BoardService {
         boardRepository.delete(board);
     }
 
+    @Transactional
+    public boolean deleteBoardForAdmin(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
+        boardRepository.delete(board);
+        return true;
 
     public List<BoardResponseDTO.BoardResponse> findTrendingBoards(int limit) {
         List<Long> topBoardIds = boardTrendingService.getTopBoardIds(limit);

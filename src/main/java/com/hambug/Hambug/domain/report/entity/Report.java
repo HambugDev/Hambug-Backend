@@ -15,17 +15,17 @@ public class Report extends Timestamped {
     private Long id;
 
     @Column(nullable = false)
-    private Long userId; // 신고한 사용자 ID
+    private Long userId;
 
     @Column(nullable = false)
-    private Long targetId; // 신고된 게시글 또는 댓글 ID
+    private Long targetId;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TargetType targetType; // 신고된 대상의 타입
+    private TargetType targetType;
 
     @Column(nullable = false)
-    private String reason; // 신고 사유
+    private String reason;
 
     public Report(Long userId, Long targetId, TargetType targetType, String reason) {
         this.userId = userId;

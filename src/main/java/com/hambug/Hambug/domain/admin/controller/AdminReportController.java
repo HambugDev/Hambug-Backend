@@ -1,5 +1,6 @@
 package com.hambug.Hambug.domain.admin.controller;
 
+import com.hambug.Hambug.domain.admin.api.AdminReportApi;
 import com.hambug.Hambug.domain.admin.dto.AdminReportReqDto;
 import com.hambug.Hambug.domain.admin.dto.AdminReportResponseDto;
 import com.hambug.Hambug.domain.admin.service.AdminReportService;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin/api/v1/reports")
 @RequiredArgsConstructor
-public class AdminReportController {
+public class AdminReportController implements AdminReportApi {
 
     private final AdminReportService adminReportService;
 

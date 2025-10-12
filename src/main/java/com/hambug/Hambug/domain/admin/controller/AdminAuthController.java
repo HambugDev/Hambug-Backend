@@ -26,13 +26,16 @@ public class AdminAuthController implements AdminApi {
     private final AdminUserService userService;
 
     @PostMapping("/register")
-    public AdminUserResponseDto.AdminUserResponse createAdminUser(@RequestBody RegisterAdminUser body) {
-        return userService.createAdminUser(body);
+    public CommonResponse<AdminUserResponseDto.AdminUserResponse> createAdminUser(@RequestBody RegisterAdminUser body) {
+        AdminUserResponseDto.AdminUserResponse adminUser = userService.createAdminUser(body);
+        return CommonResponse.ok(adminUser);
     }
 
     @PostMapping("/register/manager")
-    public AdminUserResponseDto.AdminUserResponse createManagerUser(@RequestBody RegisterAdminUser body, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return userService.createManagerUser(body);
+    public CommonResponse<AdminUserResponseDto.AdminUserResponse> createManagerUser(@RequestBody RegisterAdminUser body,
+                                                                                    @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        AdminUserResponseDto.AdminUserResponse managerUser = userService.createManagerUser(body);
+        return CommonResponse.ok(managerUser);
     }
 
     @PostMapping("/login")

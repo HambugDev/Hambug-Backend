@@ -18,13 +18,13 @@ import static com.hambug.Hambug.domain.admin.dto.AdminUserReqDTO.RegisterAdminUs
 public interface AdminApi {
 
     @Operation(summary = "관리자 계정 생성", description = "슈퍼관리자 계정을 생성합니다.")
-    AdminUserResponseDto.AdminUserResponse createAdminUser(
+    CommonResponse<AdminUserResponseDto.AdminUserResponse> createAdminUser(
             @RequestBody(description = "관리자 생성 요청", required = true,
                     content = @Content(schema = @Schema(implementation = AdminUserReqDTO.RegisterAdminUser.class)))
             @org.springframework.web.bind.annotation.RequestBody RegisterAdminUser body);
 
     @Operation(summary = "매니저 계정 생성", description = "관리자가 매니저 계정을 생성합니다.")
-    AdminUserResponseDto.AdminUserResponse createManagerUser(
+    CommonResponse<AdminUserResponseDto.AdminUserResponse> createManagerUser(
             @RequestBody(description = "매니저 생성 요청", required = true,
                     content = @Content(schema = @Schema(implementation = AdminUserReqDTO.RegisterAdminUser.class)))
             @org.springframework.web.bind.annotation.RequestBody RegisterAdminUser body,

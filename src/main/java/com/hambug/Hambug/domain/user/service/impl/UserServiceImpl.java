@@ -7,9 +7,9 @@ import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.domain.user.service.UserService;
+import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.exception.custom.AlreadyEntityException;
 import com.hambug.Hambug.global.exception.custom.JwtException;
-import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.s3.service.S3Service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto signUpOrLogin(Oauth2UserInfo userInfo) {
-        return userRepository.findByEmailAndLoginType(userInfo.getEmail(), userInfo.getLoginType())
+        return userRepository.findBySocialIdAndLoginType(userInfo.getId(), userInfo.getLoginType())
                 .map(this::login)
                 .orElseGet(() -> register(userInfo));
     }
@@ -98,14 +98,14 @@ public class UserServiceImpl implements UserService {
 
     private UserDto register(Oauth2UserInfo userInfo) {
         User user = userRepository.save(User.of(userInfo, generateRandomNickname()));
-        UserDto userDto = UserDto.authUserDTO(user);
+        UserDto userDto = UserDto.authUserDTO(user, true);
         userDto.addTokens(jwtService.generateTokens(userDto));
         jwtService.socialRefreshToken(userInfo, userDto);
         return userDto;
     }
 
     private UserDto login(User user) {
-        UserDto userDto = UserDto.authUserDTO(user);
+        UserDto userDto = UserDto.authUserDTO(user, false);
         String accessToken = jwtService.generateAccessToken(userDto);
         String refreshToken = jwtService.getRefreshToken(userDto);
         userDto.addTokens(JwtTokenDto.of(accessToken, refreshToken));

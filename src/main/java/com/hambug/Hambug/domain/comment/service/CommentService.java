@@ -6,8 +6,8 @@ import com.hambug.Hambug.domain.comment.dto.CommentRequestDTO;
 import com.hambug.Hambug.domain.comment.dto.CommentResponseDTO;
 import com.hambug.Hambug.domain.comment.entity.Comment;
 import com.hambug.Hambug.domain.comment.repository.CommentRepository;
-import com.hambug.Hambug.global.exception.custom.NotFoundException;
 import com.hambug.Hambug.global.exception.ErrorCode;
+import com.hambug.Hambug.global.exception.custom.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -76,5 +76,11 @@ public class CommentService {
         if (!comment.getBoard().getId().equals(boardId)) {
             throw new NotFoundException(ErrorCode.COMMENT_BOARD_MISMATCH);
         }
+    }
+
+    public boolean deleteCommentForAdmin(Long id) {
+        Comment comment = findComment(id);
+        commentRepository.delete(comment);
+        return true;
     }
 }

@@ -8,6 +8,7 @@ import com.hambug.Hambug.global.response.CommonResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,11 @@ public class UserController implements UserApi {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public CommonResponse<UserDto> getUsers(@PathVariable("id") Long id) {
+    public CommonResponse<UserDto> getUsers(@PathVariable("id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = getUserId(principalDetails);
+        if (!id.equals(userId)) {
+            throw new AccessDeniedException("본인 정보만 조회할 수 있습니다.");
+        }
         UserDto userDto = userService.getById(id);
         return CommonResponse.ok(userDto);
     }

@@ -1,7 +1,7 @@
 package com.hambug.Hambug.domain.auth.controller;
 
 import com.hambug.Hambug.domain.auth.api.AuthApi;
-import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.auth.dto.AuthResponseDto;
 import com.hambug.Hambug.domain.auth.dto.Oauth2RequestDTO;
 import com.hambug.Hambug.domain.auth.service.JwtService;
 import com.hambug.Hambug.domain.auth.service.oauth2.Oauth2ServiceFactory;
@@ -63,8 +63,8 @@ public class AuthController implements AuthApi {
     }
 
     @PostMapping("/login/{provider}")
-    public CommonResponse<JwtTokenDto> login(@PathVariable String provider,
-                                             @RequestBody @Valid Oauth2RequestDTO.LoginAuthCode payload) {
+    public CommonResponse<AuthResponseDto.LoginResponse> login(@PathVariable String provider,
+                                                               @RequestBody @Valid Oauth2RequestDTO.LoginAuthCode payload) {
         UserDto userDto = oauth2ServiceFactory.getService(provider).login(payload.authorizationCode());
 
         PrincipalDetails principal = new PrincipalDetails(userDto);
@@ -80,8 +80,7 @@ public class AuthController implements AuthApi {
             attrs.getRequest().getSession(true)
                     .setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
         }
-
-        return CommonResponse.ok(userDto.toJwtTokenDto());
+        return CommonResponse.ok(new AuthResponseDto.LoginResponse(userDto, userDto.toJwtTokenDto()));
     }
 
     private Long getUserId(PrincipalDetails principalDetails) {

@@ -44,7 +44,7 @@ public class AdminUser extends Timestamped {
                 .email(email)
                 .password(hashed)
                 .salt(salt)
-                .isTempPassword(true)
+                .isTempPassword(false)
                 .role(Role.ROLE_SUPER_ADMIN)
                 .build();
     }
@@ -55,7 +55,7 @@ public class AdminUser extends Timestamped {
                 .email(email)
                 .password(hashed)
                 .salt(salt)
-                .isTempPassword(true)
+                .isTempPassword(false)
                 .role(Role.ROLE_ADMIN)
                 .build();
     }

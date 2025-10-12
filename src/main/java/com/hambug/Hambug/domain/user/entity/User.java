@@ -24,7 +24,6 @@ public class User extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String socialId;
-    private String name;
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -32,7 +31,7 @@ public class User extends Timestamped {
     private LoginType loginType;
 
     private String nickname;
-    private String email;
+    
     private String profileImageUrl;
 
     @Enumerated(EnumType.STRING)
@@ -41,9 +40,7 @@ public class User extends Timestamped {
 
     public static User of(Oauth2UserInfo userInfo, String nickname) {
         return User.builder()
-                .email(userInfo.getEmail())
                 .socialId(userInfo.getId())
-                .name(userInfo.getName())
                 .nickname(nickname)
                 .loginType(userInfo.getLoginType())
                 .profileImageUrl("https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/default_profile.svg")
@@ -56,8 +53,6 @@ public class User extends Timestamped {
     public static User toEntity(UserDto userDto) {
         return User.builder()
                 .id(userDto.getUserId())
-                .email(userDto.getEmail())
-                .name(userDto.getName())
                 .loginType(userDto.getLoginType())
                 .role(userDto.getRole())
                 .isActive(userDto.isActive()).build();

@@ -1,6 +1,7 @@
 package com.hambug.Hambug.domain.comment.entity;
 
 import com.hambug.Hambug.domain.board.entity.Board;
+import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.global.timeStamped.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,6 +22,10 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Comment(String content, Board board) {
         this.content = content;

@@ -29,7 +29,8 @@ public class Burger extends Timestamped {
     private String menuDescription;
 
     @Builder
-    public Burger(String menuImage, String franchise, String menuName, String menuDescription) {
+    public Burger(Long id, String menuImage, String franchise, String menuName, String menuDescription) {
+        this.id = id;
         this.menuImage = menuImage;
         this.franchise = franchise;
         this.menuName = menuName;

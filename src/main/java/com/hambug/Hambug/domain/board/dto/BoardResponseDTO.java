@@ -19,7 +19,9 @@ public class BoardResponseDTO {
             String authorNickname,
             Long authorId,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            LocalDateTime updatedAt,
+            Long likeCount,
+            Boolean isLiked
     ) {
         public BoardResponse(Board board) {
             this(
@@ -31,7 +33,25 @@ public class BoardResponseDTO {
                     board.getUser().getNickname(),
                     board.getUser().getId(),
                     board.getCreatedAt(),
-                    board.getModifiedAt()
+                    board.getModifiedAt(),
+                    0L,
+                    false
+            );
+        }
+
+        public BoardResponse(Board board, Long likeCount, Boolean isLiked) {
+            this(
+                    board.getId(),
+                    board.getTitle(),
+                    board.getContent(),
+                    board.getCategory(),
+                    board.getImageUrls(),
+                    board.getUser().getNickname(),
+                    board.getUser().getId(),
+                    board.getCreatedAt(),
+                    board.getModifiedAt(),
+                    likeCount,
+                    isLiked
             );
         }
     }

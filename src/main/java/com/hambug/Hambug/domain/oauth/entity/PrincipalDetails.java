@@ -65,7 +65,7 @@ public class PrincipalDetails implements OAuth2User, OidcUser {
     @Override
     public String getName() {
         if (user != null) {
-            return user.getUserId() == null ? user.getName() : String.valueOf(user.getUserId());
+            return user.getUserId() == null ? user.getNickname() : String.valueOf(user.getUserId());
         }
         if (admin != null) {
             return admin.getEmail() != null ? admin.getEmail() : admin.getName();

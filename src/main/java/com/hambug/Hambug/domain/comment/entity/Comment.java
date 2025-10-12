@@ -24,12 +24,13 @@ public class Comment extends Timestamped {
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Comment(String content, Board board) {
+    public Comment(String content, Board board, User user) {
         this.content = content;
         this.board = board;
+        this.user = user;
     }
 
     public void update(String content) {

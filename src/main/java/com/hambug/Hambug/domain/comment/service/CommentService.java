@@ -6,6 +6,8 @@ import com.hambug.Hambug.domain.comment.dto.CommentRequestDTO;
 import com.hambug.Hambug.domain.comment.dto.CommentResponseDTO;
 import com.hambug.Hambug.domain.comment.entity.Comment;
 import com.hambug.Hambug.domain.comment.repository.CommentRepository;
+import com.hambug.Hambug.domain.user.entity.User;
+import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.exception.custom.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public List<CommentResponseDTO.CommentResponse> findCommentsByBoard(Long boardId) {
@@ -33,9 +36,9 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDTO.CommentResponse createComment(Long boardId, CommentRequestDTO.CommentCreateRequest request) {
+    public CommentResponseDTO.CommentResponse createComment(Long boardId, Long userId, CommentRequestDTO.CommentCreateRequest request) {
         Board board = findBoard(boardId);
-        Comment comment = new Comment(request.content(), board);
+        Comment comment = new Comment(request.content(), board, User.toEntity(userService.getById(userId)));
         commentRepository.save(comment);
         return new CommentResponseDTO.CommentResponse(comment);
     }

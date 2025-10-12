@@ -38,6 +38,9 @@ public class Board extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long viewCount = 0L;
+
     @Builder
     public Board(String title, String content, Category category, List<String> imageUrls, User user) {
         this.title = title;
@@ -45,6 +48,7 @@ public class Board extends Timestamped {
         this.category = category;
         this.imageUrls = imageUrls;
         this.user = user;
+        this.viewCount = 0L;
     }
 
     public void update(String title, String content, Category category, List<String> imageUrls) {
@@ -52,5 +56,9 @@ public class Board extends Timestamped {
         this.content = content;
         this.category = category;
         this.imageUrls = imageUrls;
+    }
+
+    public void incrementViewCount() {
+        this.viewCount++;
     }
 }

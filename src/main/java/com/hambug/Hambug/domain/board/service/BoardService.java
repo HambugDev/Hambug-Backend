@@ -8,6 +8,9 @@ import com.hambug.Hambug.domain.board.entity.Category;
 import com.hambug.Hambug.domain.board.exception.BoardNotFoundException;
 import com.hambug.Hambug.domain.board.exception.UnauthorizedBoardAccessException;
 import com.hambug.Hambug.domain.board.repository.BoardRepository;
+import com.hambug.Hambug.domain.board.service.trending.BoardTrendingService;
+import com.hambug.Hambug.domain.comment.repository.CommentRepository;
+import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
 import com.hambug.Hambug.domain.mypage.dto.MyPageRequestDto;
 import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.user.entity.User;
@@ -16,13 +19,17 @@ import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -33,6 +40,9 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final S3Service s3Service;
+    private final BoardLikeRepository boardLikeRepository;
+    private final CommentRepository commentRepository;
+    private final BoardTrendingService boardTrendingService;
 
     public List<BoardResponseDTO.BoardResponse> findAllBoards() {
         return boardRepository.findAll().stream()
@@ -50,6 +60,28 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
         return new BoardResponseDTO.BoardResponse(board);
+    }
+
+    @Transactional
+    public BoardResponseDTO.BoardResponse findBoardById(Long id, Long userId) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
+
+        board.incrementViewCount();
+
+        boardTrendingService.addViewScore(id);
+
+        long likeCount = boardLikeRepository.countByBoardId(id);
+        boolean isLiked = false;
+
+        if (userId != null) {
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                isLiked = boardLikeRepository.existsByUserAndBoard(user, board);
+            }
+        }
+
+        return new BoardResponseDTO.BoardResponse(board, likeCount, isLiked);
     }
 
     @Transactional
@@ -167,5 +199,27 @@ public class BoardService {
     @Transactional
     public Slice<MyPageResponseDto.MyBoardResponse> getMyBoards(Long userId, MyPageRequestDto.MyBoardRequest query) {
         return boardRepository.findByUserIdSlice(userId, query.lastId(), query.limit(), query.order());
+    }
+
+    public List<BoardResponseDTO.BoardResponse> findTrendingBoards(int limit) {
+        List<Long> topBoardIds = boardTrendingService.getTopBoardIds(limit);
+
+        if (topBoardIds.isEmpty()) {
+            return List.of();
+        }
+
+        List<Board> boards = boardRepository.findAllById(topBoardIds);
+
+        Map<Long, Board> boardMap = boards.stream()
+                .collect(Collectors.toMap(Board::getId, board -> board));
+
+        return topBoardIds.stream()
+                .map(boardMap::get)
+                .filter(board -> board != null)
+                .map(board -> {
+                    long likeCount = boardLikeRepository.countByBoardId(board.getId());
+                    return new BoardResponseDTO.BoardResponse(board, likeCount, false);
+                })
+                .collect(Collectors.toList());
     }
 }

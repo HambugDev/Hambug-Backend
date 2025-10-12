@@ -1,6 +1,6 @@
 package com.hambug.Hambug.domain.auth.api;
 
-import com.hambug.Hambug.domain.auth.dto.JwtTokenDto;
+import com.hambug.Hambug.domain.auth.dto.AuthResponseDto;
 import com.hambug.Hambug.domain.auth.dto.Oauth2RequestDTO;
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.domain.user.dto.UserDto;
@@ -35,5 +35,5 @@ public interface AuthApi {
             , @AuthenticationPrincipal PrincipalDetails principalDetails);
 
     @Operation(summary = "소셜 로그인", description = "provider(kakao|apple)와 인가코드로 로그인")
-    CommonResponse<JwtTokenDto> login(String provider, Oauth2RequestDTO.LoginAuthCode payload);
+    CommonResponse<AuthResponseDto.LoginResponse> login(String provider, Oauth2RequestDTO.LoginAuthCode payload);
 }

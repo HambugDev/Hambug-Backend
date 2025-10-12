@@ -1,0 +1,116 @@
+[
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%85%B8%EB%B8%8C%EB%9E%9C%EB%93%9C%EB%B2%84%EA%B1%B0_%EB%AF%B8%ED%8A%B8%EB%A7%88%EB%8B%88%EC%95%84.png",
+    "franchise": "노브랜드버거",
+    "menu_name": "미트마니아",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%85%B8%EB%B8%8C%EB%9E%9C%EB%93%9C%EB%B2%84%EA%B1%B0_%EC%BD%94%EC%9A%B8%EC%8A%AC%EB%A1%9C%EC%B9%98%ED%82%A8.png",
+    "franchise": "노브랜드버거",
+    "menu_name": "코울슬로치킨",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%89%B4%EC%9A%95%EB%B2%84%EA%B1%B0_%EC%98%A4%EC%B0%A1%EB%B2%84%EA%B1%B0.png",
+    "franchise": "뉴욕버거",
+    "menu_name": "오찡버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%A7%98%EC%8A%A4%ED%84%B0%EC%B9%98_%EA%B7%B8%EB%A6%B4%EB%93%9C%EB%B9%84%ED%94%84%EB%B2%84%EA%B1%B0.png",
+    "franchise": "맘스터치",
+    "menu_name": "그릴드비프버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%A7%98%EC%8A%A4%ED%84%B0%EC%B9%98_%EC%95%84%EB%9D%BC%EB%B9%84%EC%95%84%EB%94%B0%EC%B9%98%EC%A6%88%EB%B2%84%EA%B1%B0.png",
+    "franchise": "맘스터치",
+    "menu_name": "아라비아따치즈버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%A7%A5%EB%8F%84%EB%82%A0%EB%93%9C_1955%EB%B2%84%EA%B1%B0.png",
+    "franchise": "맥도날드",
+    "menu_name": "1955버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%A7%A5%EB%8F%84%EB%82%A0%EB%93%9C_%EB%B2%A0%EC%9D%B4%EC%BB%A8%ED%86%A0%EB%A7%88%ED%86%A0%EB%94%94%EB%9F%AD%EC%8A%A4.png",
+    "franchise": "맥도날드",
+    "menu_name": "베이컨토마토디럭스",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%B0%94%EC%8A%A4%EB%B2%84%EA%B1%B0_%EC%99%80%EC%82%AC%EB%B9%84%EB%A7%88%EC%9A%94%EC%89%AC%EB%A6%BC%ED%94%84%EB%B2%84%EA%B1%B0.png",
+    "franchise": "바스버거",
+    "menu_name": "와사비마요쉬림프버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%B2%84%EA%B1%B0%EB%A6%AC_%ED%95%AB%EC%B9%98%ED%8F%B4%EB%A0%88%EB%B2%84%EA%B1%B0.png",
+    "franchise": "버거리",
+    "menu_name": "핫치폴레버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%B2%84%EA%B1%B0%EC%8A%A4%EC%98%AC%EB%A7%88%EC%9D%B4%ED%8B%B0_%EC%98%AC%EB%A7%88%EC%9D%B4%EA%B0%93%EB%B2%84%EA%B1%B0.png",
+    "franchise": "버거스올마이티",
+    "menu_name": "올마이갓버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%B2%84%EA%B1%B0%ED%82%B9_%ED%86%B5%EC%83%88%EC%9A%B0%EC%99%80%ED%8D%BC.png",
+    "franchise": "버거킹",
+    "menu_name": "통새우와퍼",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%B3%B4%EC%96%B4%EB%93%9C%EC%95%A4%ED%97%9D%EA%B7%B8%EB%A6%AC_%EB%B9%85%EC%89%AC%EB%A6%BC%ED%94%84%EB%B2%84%EA%B1%B0.png",
+    "franchise": "보어드앤헝그리",
+    "menu_name": "빅쉬림프버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%B8%8C%EB%A6%AC%EC%A6%88%EB%B2%88%EB%B2%84%EA%B1%B0_%EC%B9%B4%ED%94%84%EB%A0%88%EC%A0%9C%EB%B2%84%EA%B1%B0.png",
+    "franchise": "브리즈번버거",
+    "menu_name": "카프레제버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EB%B8%94%EB%A6%AC%EC%8A%A4%EB%B2%84%EA%B1%B0_%ED%95%98%EC%99%80%EC%9D%B4%EC%95%88%EB%B2%84%EA%B1%B0.png",
+    "franchise": "블리스버거",
+    "menu_name": "하와이안버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EC%89%90%EC%9D%B4%ED%81%AC%EC%89%91_%EC%89%91%EC%8A%A4%ED%83%9D.png",
+    "franchise": "쉐이크쉑",
+    "menu_name": "쉑스택",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%EC%B9%99%EB%B0%94%EC%9D%B4%EC%B9%99_%EC%95%84%EB%B3%B4%EC%B9%B4%EB%8F%84%EC%B9%98%ED%82%A8%EB%B2%84%EA%B1%B0.png",
+    "franchise": "칙바이칙",
+    "menu_name": "아보카도치킨버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/%ED%9E%98%EB%82%9C%EB%8B%A4%EB%B2%84%EA%B1%B0_%EB%A8%B8%EC%89%AC%EB%A3%B8%EC%B9%98%EC%A6%88%EB%B2%84%EA%B1%B0.png",
+    "franchise": "힘난다버거",
+    "menu_name": "머쉬룸치즈버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/GTS%EB%B2%84%EA%B1%B0_GTS%EB%B2%A0%EC%9D%B4%EC%BB%A8%EB%8D%94%EB%B8%94%EB%B2%84%EA%B1%B0.png",
+    "franchise": "GTS버거",
+    "menu_name": "GTS베이컨더블버거",
+    "menu_description": ""
+  },
+  {
+    "menu_image": "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/KFC_%EC%A7%95%EA%B1%B0%ED%83%80%EC%9B%8C.png",
+    "franchise": "KFC",
+    "menu_name": "징거타워",
+    "menu_description": ""
+  }
+]

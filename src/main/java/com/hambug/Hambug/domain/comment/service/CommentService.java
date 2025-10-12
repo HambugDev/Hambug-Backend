@@ -6,12 +6,15 @@ import com.hambug.Hambug.domain.comment.dto.CommentRequestDTO;
 import com.hambug.Hambug.domain.comment.dto.CommentResponseDTO;
 import com.hambug.Hambug.domain.comment.entity.Comment;
 import com.hambug.Hambug.domain.comment.repository.CommentRepository;
+import com.hambug.Hambug.domain.mypage.dto.MyPageRequestDto;
+import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.exception.custom.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,4 +89,10 @@ public class CommentService {
         commentRepository.delete(comment);
         return true;
     }
+
+    @Transactional
+    public Slice<MyPageResponseDto.MyCommentResponse> getMyComments(Long userId, MyPageRequestDto.MyCommentRequest query) {
+        return commentRepository.findByUserIdSlice(userId, query.lastId(), query.limit(), query.order());
+    }
+
 }

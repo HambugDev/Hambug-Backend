@@ -35,7 +35,7 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
                 predicate = predicate.and(board.id.lt(lastId));
             }
         }
-        
+
         List<Board> results = factory.selectFrom(board)
                 .join(user).on(board.user.id.eq(user.id))
                 .where(predicate)
@@ -54,7 +54,8 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
                         b.getTitle(),
                         b.getContent(),
                         b.getCategory(),
-                        b.getImageUrls() != null ? new ArrayList<>(b.getImageUrls()) : java.util.List.of()
+                        b.getImageUrls() != null ? new ArrayList<>(b.getImageUrls()) : java.util.List.of(),
+                        b.getCreatedAt()
                 )).toList();
 
 

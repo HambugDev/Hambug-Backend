@@ -34,7 +34,7 @@ public class MyPageController {
     @GetMapping("/comments")
     public CommonResponse<?> myComments(@ModelAttribute MyPageRequestDto.MyCommentRequest query,
                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        myPageService.getMyComments();
-        return CommonResponse.ok(true);
+        Long userId = getUserId(principalDetails);
+        return CommonResponse.ok(myPageService.getMyComments(query, userId));
     }
 }

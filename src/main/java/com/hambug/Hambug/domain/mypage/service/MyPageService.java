@@ -24,8 +24,8 @@ public class MyPageService {
     }
 
 
-    public void getMyComments() {
-
-
+    public MyPageResponseDto.CommentPage getMyComments(MyPageRequestDto.MyCommentRequest query, Long userId) {
+        Slice<MyPageResponseDto.MyCommentResponse> slice = commentService.getMyComments(userId, query);
+        return MyPageResponseDto.CommentPage.from(slice.getContent(), slice.hasNext());
     }
 }

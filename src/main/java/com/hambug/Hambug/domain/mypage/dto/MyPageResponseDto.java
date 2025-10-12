@@ -2,8 +2,10 @@ package com.hambug.Hambug.domain.mypage.dto;
 
 import com.hambug.Hambug.domain.board.entity.Board;
 import com.hambug.Hambug.domain.board.entity.Category;
+import com.hambug.Hambug.domain.comment.entity.Comment;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MyPageResponseDto {
@@ -29,7 +31,8 @@ public class MyPageResponseDto {
             String title,
             String content,
             Category category,
-            List<String> imageUrls
+            List<String> imageUrls,
+            LocalDateTime createAt
     ) {
         public static MyBoardResponse from(Board board) {
             return MyBoardResponse.builder()
@@ -38,8 +41,41 @@ public class MyPageResponseDto {
                     .content(board.getContent())
                     .category(board.getCategory())
                     .imageUrls(board.getImageUrls() != null ? board.getImageUrls() : List.of())
+                    .createAt(board.getCreatedAt())
                     .build();
         }
     }
 
+    public record CommentPage(
+            Boolean nextPage,
+            Long nextCursorId,
+            List<MyCommentResponse> content
+    ) {
+        public static CommentPage from(List<MyCommentResponse> content, boolean hasNext) {
+            Long nextCursorId = (!content.isEmpty() && hasNext)
+                    ? content.get(content.size() - 1).commentId()
+                    : null;
+            return new CommentPage(hasNext, nextCursorId, content);
+        }
+    }
+
+    @Builder
+    public record MyCommentResponse(
+            Long boardId,
+            String title,
+            Long commentId,
+            String content,
+            LocalDateTime createdAt
+    ) {
+
+        public static MyCommentResponse from(Comment comment) {
+            return MyCommentResponse.builder()
+                    .boardId(comment.getBoard().getId())
+                    .title(comment.getBoard().getTitle())
+                    .commentId(comment.getId())
+                    .content(comment.getContent())
+                    .createdAt(comment.getCreatedAt())
+                    .build();
+        }
+    }
 }

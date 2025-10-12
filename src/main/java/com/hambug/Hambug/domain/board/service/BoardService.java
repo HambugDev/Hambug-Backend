@@ -11,6 +11,8 @@ import com.hambug.Hambug.domain.board.repository.BoardRepository;
 import com.hambug.Hambug.domain.board.service.trending.BoardTrendingService;
 import com.hambug.Hambug.domain.comment.repository.CommentRepository;
 import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
+import com.hambug.Hambug.domain.mypage.dto.MyPageRequestDto;
+import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.global.exception.ErrorCode;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -190,6 +194,12 @@ public class BoardService {
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
         boardRepository.delete(board);
         return true;
+    }
+
+    @Transactional
+    public Slice<MyPageResponseDto.MyBoardResponse> getMyBoards(Long userId, MyPageRequestDto.MyBoardRequest query) {
+        return boardRepository.findByUserIdSlice(userId, query.lastId(), query.limit(), query.order());
+    }
 
     public List<BoardResponseDTO.BoardResponse> findTrendingBoards(int limit) {
         List<Long> topBoardIds = boardTrendingService.getTopBoardIds(limit);

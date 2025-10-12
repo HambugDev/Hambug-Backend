@@ -8,12 +8,15 @@ import com.hambug.Hambug.domain.board.entity.Category;
 import com.hambug.Hambug.domain.board.exception.BoardNotFoundException;
 import com.hambug.Hambug.domain.board.exception.UnauthorizedBoardAccessException;
 import com.hambug.Hambug.domain.board.repository.BoardRepository;
+import com.hambug.Hambug.domain.mypage.dto.MyPageRequestDto;
+import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -159,5 +162,10 @@ public class BoardService {
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
         boardRepository.delete(board);
         return true;
+    }
+
+    @Transactional
+    public Slice<MyPageResponseDto.MyBoardResponse> getMyBoards(Long userId, MyPageRequestDto.MyBoardRequest query) {
+        return boardRepository.findByUserIdSlice(userId, query.lastId(), query.limit(), query.order());
     }
 }

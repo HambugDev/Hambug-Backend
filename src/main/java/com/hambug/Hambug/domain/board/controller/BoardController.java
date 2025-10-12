@@ -8,6 +8,7 @@ import com.hambug.Hambug.domain.board.entity.Category;
 import com.hambug.Hambug.domain.board.service.BoardService;
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.global.response.CommonResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -98,5 +99,14 @@ public class BoardController implements BoardApi {
                                                @AuthenticationPrincipal PrincipalDetails principalDetails) {
         boardService.deleteBoard(id, principalDetails.getUser().getUserId());
         return CommonResponse.ok(true);
+    }
+
+
+    @GetMapping("/trending")
+    @Operation(summary = "인기 게시글 조회", description = "실시간 인기 게시글을 조회합니다. Redis 기반 점수 시스템으로 최근 활발한 게시글이 상위에 노출됩니다.")
+    public CommonResponse<List<BoardResponseDTO.BoardResponse>> getTrendingBoards(
+            @RequestParam(defaultValue = "6") int limit) {
+        List<BoardResponseDTO.BoardResponse> trendingBoards = boardService.findTrendingBoards(limit);
+        return CommonResponse.ok(trendingBoards);
     }
 }

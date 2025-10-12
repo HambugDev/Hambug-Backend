@@ -2,6 +2,7 @@ package com.hambug.Hambug.domain.like.service;
 
 import com.hambug.Hambug.domain.board.entity.Board;
 import com.hambug.Hambug.domain.board.repository.BoardRepository;
+import com.hambug.Hambug.domain.board.service.trending.BoardTrendingService;
 import com.hambug.Hambug.domain.like.dto.LikeResponseDTO;
 import com.hambug.Hambug.domain.like.entity.BoardLike;
 import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
@@ -19,12 +20,8 @@ public class BoardLikeService {
     private final BoardLikeRepository boardLikeRepository;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final BoardTrendingService boardTrendingService;
 
-    /**
-     * 좋아요 토글 기능
-     * - 이미 좋아요를 누른 경우: 좋아요 취소
-     * - 좋아요를 누르지 않은 경우: 좋아요 추가
-     */
     @Transactional
     public LikeResponseDTO toggleLike(Long boardId, Long userId) {
         User user = userRepository.findById(userId)
@@ -50,9 +47,10 @@ public class BoardLikeService {
                     .build();
             boardLikeRepository.save(boardLike);
             isLiked = true;
+
+            boardTrendingService.addLikeScore(boardId);
         }
 
-        // 현재 좋아요 개수 조회
         long likeCount = boardLikeRepository.countByBoard(board);
 
         return LikeResponseDTO.of(boardId, isLiked, likeCount);

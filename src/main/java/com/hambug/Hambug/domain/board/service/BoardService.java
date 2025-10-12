@@ -8,6 +8,7 @@ import com.hambug.Hambug.domain.board.entity.Category;
 import com.hambug.Hambug.domain.board.exception.BoardNotFoundException;
 import com.hambug.Hambug.domain.board.exception.UnauthorizedBoardAccessException;
 import com.hambug.Hambug.domain.board.repository.BoardRepository;
+import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.global.exception.ErrorCode;
@@ -30,6 +31,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final S3Service s3Service;
+    private final BoardLikeRepository boardLikeRepository;
 
     public List<BoardResponseDTO.BoardResponse> findAllBoards() {
         return boardRepository.findAll().stream()
@@ -47,6 +49,23 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
         return new BoardResponseDTO.BoardResponse(board);
+    }
+
+    public BoardResponseDTO.BoardResponse findBoardById(Long id, Long userId) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
+
+        long likeCount = boardLikeRepository.countByBoardId(id);
+        boolean isLiked = false;
+
+        if (userId != null) {
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                isLiked = boardLikeRepository.existsByUserAndBoard(user, board);
+            }
+        }
+
+        return new BoardResponseDTO.BoardResponse(board, likeCount, isLiked);
     }
 
     @Transactional

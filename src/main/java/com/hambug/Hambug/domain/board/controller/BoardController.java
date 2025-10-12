@@ -40,8 +40,15 @@ public class BoardController implements BoardApi {
 
     @Override
     @GetMapping("/{id}")
-    public CommonResponse<BoardResponseDTO.BoardResponse> getBoard(@PathVariable("id") Long id) {
-        BoardResponseDTO.BoardResponse board = boardService.findBoardById(id);
+    public CommonResponse<BoardResponseDTO.BoardResponse> getBoard(
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal(errorOnInvalidType = false) PrincipalDetails principalDetails) {
+
+        Long userId = (principalDetails != null && principalDetails.getUser() != null)
+                ? principalDetails.getUser().getUserId()
+                : null;
+
+        BoardResponseDTO.BoardResponse board = boardService.findBoardById(id, userId);
         return CommonResponse.ok(board);
     }
 

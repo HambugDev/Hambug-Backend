@@ -40,6 +40,9 @@ public class UserDto {
     boolean isActive;
 
     @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
+    String socialId;
+
+    @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
     String accessToken;
 
     @Getter(onMethod_ = {@JsonIgnore, @Schema(hidden = true)})
@@ -71,6 +74,7 @@ public class UserDto {
                 .profileImageUrl(user.getProfileImageUrl())
                 .loginType(user.getLoginType())
                 .email(user.getEmail())
+                .socialId(user.getSocialId())
                 .role(user.getRole())
                 .isActive(user.isActive()).build();
     }
@@ -78,6 +82,10 @@ public class UserDto {
     public void addTokens(JwtTokenDto jwtTokenDto) {
         this.accessToken = jwtTokenDto.getAccessToken();
         this.refreshToken = jwtTokenDto.getRefreshToken();
+    }
+
+    public JwtTokenDto toJwtTokenDto() {
+        return JwtTokenDto.of(this.accessToken, this.refreshToken);
     }
 
     public String userIdStr() {

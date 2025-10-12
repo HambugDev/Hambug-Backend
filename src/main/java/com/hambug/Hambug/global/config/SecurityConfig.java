@@ -1,10 +1,5 @@
 package com.hambug.Hambug.global.config;
 
-import com.hambug.Hambug.domain.oauth.apple.AppleAuthorizationCodeTokenResponseClient;
-import com.hambug.Hambug.domain.oauth.service.CustomOauth2FailHandler;
-import com.hambug.Hambug.domain.oauth.service.CustomOauth2SuccessHandler;
-import com.hambug.Hambug.domain.oauth.service.CustomOauth2UserService;
-import com.hambug.Hambug.domain.oauth.service.CustomOidcUserService;
 import com.hambug.Hambug.global.security.JwtAuthenticationFilter;
 import com.hambug.Hambug.global.security.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +23,13 @@ import static com.hambug.Hambug.global.constatns.Security.*;
 public class SecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
-    private final CustomOauth2UserService customOauth2UserService;
-    private final CustomOauth2SuccessHandler customOauth2SuccessHandler;
-    private final CustomOauth2FailHandler customOauth2FailHandler;
+    //    private final CustomOauth2UserService customOauth2UserService;
+//    private final CustomOauth2SuccessHandler customOauth2SuccessHandler;
+//    private final CustomOauth2FailHandler customOauth2FailHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
-    private final CustomOidcUserService customOidcUserService;
-    private final AppleAuthorizationCodeTokenResponseClient appleTokenClient;
+//    private final CustomOidcUserService customOidcUserService;
+//    private final AppleAuthorizationCodeTokenResponseClient appleTokenClient;
 
 
     @Bean
@@ -49,19 +44,20 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                         .requestMatchers(WHITELISTED_URLS.toArray(String[]::new)).permitAll()
-                        .requestMatchers(ADMIN_PATH).hasRole(ADMIN_ROLE)
+                        .requestMatchers(ADMIN_PATH).hasAnyRole(ADMIN_ROLE, SUPER_ADMIN_ROLE)
+                        .requestMatchers(ONLY_SUPER_ADMIN_URLS.toArray(String[]::new)).hasAnyRole(SUPER_ADMIN_ROLE)
                         .requestMatchers(USER_PATH).hasAnyRole(USER_ROLE)
                         .anyRequest().authenticated());
 
-        http.oauth2Login(oauth2 -> oauth2
-                .tokenEndpoint(token -> token.accessTokenResponseClient(appleTokenClient))
-                .userInfoEndpoint(userInfo -> userInfo
-                        .userService(customOauth2UserService)   // Kakao 등 OAuth2
-                        .oidcUserService(customOidcUserService) // Apple 등 OIDC
-                )
-                .successHandler(customOauth2SuccessHandler)
-                .failureHandler(customOauth2FailHandler)
-        );
+//        http.oauth2Login(oauth2 -> oauth2
+//                .tokenEndpoint(token -> token.accessTokenResponseClient(appleTokenClient))
+//                .userInfoEndpoint(userInfo -> userInfo
+//                        .userService(customOauth2UserService)   // Kakao 등 OAuth2
+//                        .oidcUserService(customOidcUserService) // Apple 등 OIDC
+//                )
+//                .successHandler(customOauth2SuccessHandler)
+//                .failureHandler(customOauth2FailHandler)
+//        );
 
 //        http.exceptionHandling((exception) ->
 //                exception.authenticationEntryPoint(customAuthenticationEntryPoint)

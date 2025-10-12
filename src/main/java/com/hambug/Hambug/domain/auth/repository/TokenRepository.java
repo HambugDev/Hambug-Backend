@@ -9,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface TokenRepository extends JpaRepository<Token, Long> {
+public interface TokenRepository extends JpaRepository<Token, Long>, CustomTokenRepository {
 
     Optional<Token> findByUserId(Long userId);
+
+    Optional<Token> findByAdminUserId(Long adminUserId);
 
     Optional<Token> findByToken(String token);
 

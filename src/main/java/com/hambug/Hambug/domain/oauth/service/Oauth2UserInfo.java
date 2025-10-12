@@ -11,4 +11,6 @@ public interface Oauth2UserInfo {
     String getName();
 
     LoginType getLoginType();
+
+    String getRefreshToken();
 }

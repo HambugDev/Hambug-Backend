@@ -37,4 +37,10 @@ public class KakaoUserInfo implements Oauth2UserInfo {
     public LoginType getLoginType() {
         return LoginType.KAKAO;
     }
+
+    @Override
+    public String getRefreshToken() {
+        return "";
+    }
+
 }

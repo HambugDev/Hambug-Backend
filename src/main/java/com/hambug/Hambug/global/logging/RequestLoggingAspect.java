@@ -62,7 +62,7 @@ public class RequestLoggingAspect {
         } catch (Throwable ex) {
             int status = response != null ? response.getStatus() : 500;
             long took = System.currentTimeMillis() - start;
-            log.error("[ERR] {} {} status={} took={}ms handler={} ex={}: {}", httpMethod, uri, status, took, handler, ex.getClass().getSimpleName(), ex.getMessage(), ex);
+            log.error("[ERR] {} {} status={} took={}ms handler={} ex={}: {}", httpMethod, uri, status, took, handler, ex.getClass().getSimpleName(), ex.getMessage());
             throw ex;
         }
     }

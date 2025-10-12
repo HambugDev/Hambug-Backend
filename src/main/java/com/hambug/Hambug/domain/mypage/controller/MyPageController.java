@@ -1,6 +1,8 @@
 package com.hambug.Hambug.domain.mypage.controller;
 
+import com.hambug.Hambug.domain.mypage.api.MyPageApi;
 import com.hambug.Hambug.domain.mypage.dto.MyPageRequestDto;
+import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.mypage.service.MyPageService;
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
 import com.hambug.Hambug.global.response.CommonResponse;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/my-pages")
 @RequiredArgsConstructor
 @Slf4j
-public class MyPageController {
+public class MyPageController implements MyPageApi {
 
     private final MyPageService myPageService;
 
@@ -25,15 +27,15 @@ public class MyPageController {
     }
 
     @GetMapping("/boards")
-    public CommonResponse<?> myBoards(@ModelAttribute MyPageRequestDto.MyBoardRequest query,
-                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public CommonResponse<MyPageResponseDto.BoardPage> myBoards(@ModelAttribute MyPageRequestDto.MyBoardRequest query,
+                                                                @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
         return CommonResponse.ok(myPageService.getMyBoards(query, userId));
     }
 
     @GetMapping("/comments")
-    public CommonResponse<?> myComments(@ModelAttribute MyPageRequestDto.MyCommentRequest query,
-                                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public CommonResponse<MyPageResponseDto.CommentPage> myComments(@ModelAttribute MyPageRequestDto.MyCommentRequest query,
+                                                                    @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
         return CommonResponse.ok(myPageService.getMyComments(query, userId));
     }

@@ -182,7 +182,6 @@ public class JwtService {
 
     public Claims validateToken(String token) {
         Claims claims = parseToken(token);
-        log.info("클레임 : {}", claims);
         if ("refresh".equals(claims.get("type"))) {
             log.info("엥에에");
             tokenRepository.findByToken(token).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 토큰입니다."));

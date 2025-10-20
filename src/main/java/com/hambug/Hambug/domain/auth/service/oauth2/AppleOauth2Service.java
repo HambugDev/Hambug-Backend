@@ -19,7 +19,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -48,42 +47,18 @@ public class AppleOauth2Service implements Oauth2Service {
     }
 
     @Override
-    public UserDto login(String authorizationCode) {
-        String clientSecret = clientSecretGenerator.generate();
-
-        BodyInserters.FormInserter<String> form = BodyInserters
-                .fromFormData("grant_type", "authorization_code")
-                .with("code", authorizationCode)
-                .with("client_id", clientSecretGenerator.getClientId())
-                .with("client_secret", clientSecret);
-        if (redirectUri != null && !redirectUri.isBlank()) {
-            form = form.with("redirect_uri", redirectUri);
-        }
-
-        AppleTokenResponse token = webClient.post()
-                .uri("https://appleid.apple.com/auth/token")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(form)
-                .retrieve()
-                .bodyToMono(AppleTokenResponse.class)
-                .block();
-
-        log.info("Apple token response: {}", token);
-
-        Map<String, Object> claims = decodeIdToken(Objects.requireNonNull(token).id_token);
+    public UserDto login(String idToken) {
+        Map<String, Object> claims = decodeIdToken(idToken);
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("sub", claims.get("sub"));
         if (claims.get("email") != null) {
             attributes.put("email", claims.get("email"));
         }
-        // Include provider refresh_token so it can be persisted
-        if (token != null && token.refresh_token != null) {
-            attributes.put("refresh_token", token.refresh_token);
-        }
+        
+        AppleUserInfo appleUserInfo = new AppleUserInfo(attributes);
 
-        return userService.signUpOrLogin(new AppleUserInfo(attributes));
+        return userService.signUpOrLogin(appleUserInfo);
     }
 
     @Override

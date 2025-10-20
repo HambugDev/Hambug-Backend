@@ -14,8 +14,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Objects;
-
 import static com.hambug.Hambug.domain.auth.dto.KakaoUserResponse.TokenResponse;
 
 @Service
@@ -37,19 +35,19 @@ public class KakaoOauthService implements Oauth2Service {
     private String kakaoAdminKey;
 
     @Override
-    public UserDto login(String code) {
-        // 1) 액세스 토큰 요청
-        TokenResponse token = getTokenResponse(code);
-
+    public UserDto login(String accessToken) {
         KakaoUserResponse me = webClient.get()
                 .uri("https://kapi.kakao.com/v2/user/me")
-                .headers(h -> h.setBearerAuth(Objects.requireNonNull(token).getAccessToken()))
+                .headers(h -> h.setBearerAuth(accessToken))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(KakaoUserResponse.class)
                 .block();
 
-        Objects.requireNonNull(me).addToken(token);
+        if (me == null) {
+            throw new RuntimeException("카카오 사용자 정보를 가져오지 못했습니다.");
+        }
+
         return userService.signUpOrLogin(me);
     }
 

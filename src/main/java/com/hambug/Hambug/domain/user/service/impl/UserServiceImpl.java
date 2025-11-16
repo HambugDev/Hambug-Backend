@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.save(User.of(userInfo, generateRandomNickname()));
         UserDto userDto = UserDto.authUserDTO(user, true);
         userDto.addTokens(jwtService.generateTokens(userDto));
-        jwtService.socialRefreshToken(userInfo, userDto);
         return userDto;
     }
 

@@ -35,6 +35,9 @@ public class KakaoUserResponse implements Oauth2UserInfo {
 
     @Override
     public String getRefreshToken() {
+        if (token == null || token.getRefreshToken() == null) {
+            return null;
+        }
         return token.getRefreshToken();
     }
 

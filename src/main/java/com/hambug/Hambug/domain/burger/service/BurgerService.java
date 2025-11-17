@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -26,12 +27,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BurgerService {
 
+    private static final String RECOMMENDED_BURGERS_KEY = "burger:recommended:today";
+    private static final String BURGER_IDS_KEY = "burger:recommended:ids";
     private final BurgerRepository burgerRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
-
-    private static final String RECOMMENDED_BURGERS_KEY = "burger:recommended:today";
-    private static final String BURGER_IDS_KEY = "burger:recommended:ids";
 
     @PostConstruct
     @Transactional
@@ -48,7 +48,8 @@ public class BurgerService {
 
             List<Map<String, String>> burgerDataList = objectMapper.readValue(
                     inputStream,
-                    new TypeReference<List<Map<String, String>>>() {}
+                    new TypeReference<List<Map<String, String>>>() {
+                    }
             );
 
             List<Burger> burgers = burgerDataList.stream()
@@ -104,10 +105,9 @@ public class BurgerService {
             }
         }
 
-        burgerIds = ((List<?>) cachedIds).stream()
-                .map(id -> Long.parseLong(id.toString()))
-                .collect(Collectors.toList());
 
+        burgerIds = Arrays.stream(String.valueOf(cachedIds).split(","))
+                .map(Long::parseLong).toList();
         List<Burger> burgers = burgerRepository.findAllById(burgerIds);
 
         Map<Long, Burger> burgerMap = burgers.stream()

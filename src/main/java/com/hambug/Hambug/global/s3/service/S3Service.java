@@ -32,7 +32,11 @@ public class S3Service {
     }
 
     private String getPublicUrl(String fileName) {
-        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, amazonS3.getRegionName(), fileName);
+        return String.format(
+                "https://s3.%s.amazonaws.com/%s/%s",
+                amazonS3.getRegionName(),
+                bucket,
+                fileName
+        );
     }
-
 }

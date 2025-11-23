@@ -26,7 +26,7 @@ import java.security.SecureRandom;
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
-    private static final String NICKNAME_PREFIX = "HAMBUG_";
+    private static final String NICKNAME_PREFIX = "햄린이_";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final long TEN_POW_10 = 1_000_000_0000L;
 

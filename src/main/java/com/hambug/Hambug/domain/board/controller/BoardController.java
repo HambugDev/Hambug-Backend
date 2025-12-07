@@ -28,9 +28,12 @@ public class BoardController implements BoardApi {
 
     @Override
     @GetMapping
-    public CommonResponse<List<BoardResponseDTO.BoardResponse>> getBoards() {
-        List<BoardResponseDTO.BoardResponse> boards = boardService.findAllBoards();
-        return CommonResponse.ok(boards);
+    public CommonResponse<BoardResponseDTO.BoardAllResponse> getBoards(@RequestParam(required = false) Long lastId,
+                                                                       @RequestParam(defaultValue = "10") int limit,
+                                                                       @RequestParam(defaultValue = "DESC") String order) {
+        BoardResponseDTO.BoardAllResponse allBoards = boardService.findAllBoards(lastId, limit, order.toLowerCase());
+        return CommonResponse.ok(allBoards);
+
     }
 
     @Override
@@ -62,7 +65,7 @@ public class BoardController implements BoardApi {
         BoardResponseDTO.BoardResponse createdBoard = boardService.createBoard(request, principalDetails.getUser().getUserId());
         return CommonResponse.ok(createdBoard);
     }
-    
+
     @Override
     @PostMapping(
             value = "/with-images",

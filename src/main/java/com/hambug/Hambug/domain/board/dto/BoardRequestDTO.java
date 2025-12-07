@@ -19,12 +19,20 @@ public class BoardRequestDTO {
             Category category,
 
             List<String> imageUrls
-    ) {}
+    ) {
+    }
 
     public record BoardUpdateRequest(
             String title,
             String content,
             Category category,
             List<String> imageUrls
-    ) {}
+    ) {
+    }
+
+    public record BoardAllRequest(Long lastId, Integer limit, String order) {
+        public BoardAllRequest() {
+            this(null, 10, "DESC");
+        }
+    }
 }

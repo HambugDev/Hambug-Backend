@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,10 +43,55 @@ public class BoardService {
     private final CommentRepository commentRepository;
     private final BoardTrendingService boardTrendingService;
 
-    public List<BoardResponseDTO.BoardResponse> findAllBoards() {
-        return boardRepository.findAll().stream()
-                .map(BoardResponseDTO.BoardResponse::new)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public BoardResponseDTO.BoardAllResponse findAllBoards(Long lastId, int limit, String order) {
+
+        var slice = boardRepository.findAllSlice(lastId, limit, order);
+
+        var boardMap = new LinkedHashMap<Long, BoardResponseDTO.BoardResponse>();
+
+        slice.getContent().forEach(tuple -> {
+
+            var boardId = tuple.get(0, Long.class);
+            var title = tuple.get(1, String.class);
+            var content = tuple.get(2, String.class);
+            var category = tuple.get(3, Category.class);
+            var imageUrl = tuple.get(4, String.class);
+            var nickname = tuple.get(5, String.class);
+            var authorId = tuple.get(6, Long.class);
+            var createdAt = tuple.get(7, LocalDateTime.class);
+            var updatedAt = tuple.get(8, LocalDateTime.class);
+            var viewCount = tuple.get(9, Long.class);
+            var commentCount = tuple.get(10, Long.class);
+
+            boardMap.computeIfAbsent(boardId, key ->
+                    new BoardResponseDTO.BoardResponse(
+                            boardId,
+                            title,
+                            content,
+                            category,
+                            new ArrayList<>(),
+                            nickname,
+                            authorId,
+                            createdAt,
+                            updatedAt,
+                            viewCount,
+                            0L,
+                            commentCount,
+                            false
+                    ));
+
+            if (imageUrl != null && !imageUrl.isBlank()) {
+                boardMap.get(boardId).imageUrls().add(imageUrl);
+            }
+        });
+
+        var boardResponses = new ArrayList<>(boardMap.values());
+
+        Long nextCursorId = boardResponses.isEmpty() ? null : boardResponses.get(boardResponses.size() - 1).id();
+        Boolean hasNext = slice.hasNext();
+
+        return new BoardResponseDTO.BoardAllResponse(boardResponses, nextCursorId, hasNext);
     }
 
     public List<BoardResponseDTO.BoardResponse> findBoardsByCategory(Category category) {

@@ -9,6 +9,13 @@ import java.util.List;
 
 public class BoardResponseDTO {
 
+    public record BoardAllResponse(
+            List<BoardResponse> content,
+            Long netCursorId,
+            Boolean nextPage
+    ) {
+    }
+
 
     public record BoardResponse(
             Long id,
@@ -22,6 +29,7 @@ public class BoardResponseDTO {
             LocalDateTime updatedAt,
             Long viewCount,
             Long likeCount,
+            Long commentCount,
             Boolean isLiked
     ) {
         public BoardResponse(Board board) {
@@ -37,6 +45,7 @@ public class BoardResponseDTO {
                     board.getModifiedAt(),
                     board.getViewCount(),
                     0L,
+                    board.getCommentCount(),
                     false
             );
         }
@@ -54,6 +63,7 @@ public class BoardResponseDTO {
                     board.getModifiedAt(),
                     board.getViewCount(),
                     likeCount,
+                    board.getCommentCount(),
                     isLiked
             );
         }

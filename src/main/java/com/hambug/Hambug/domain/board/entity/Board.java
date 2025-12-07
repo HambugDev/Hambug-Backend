@@ -7,11 +7,15 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
+@ToString(exclude = {"images", "user"})
 @NoArgsConstructor
 public class Board extends Timestamped {
 
@@ -29,10 +33,8 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private Category category;
 
-    @ElementCollection
-    @CollectionTable(name = "board_images", joinColumns = @JoinColumn(name = "board_id"))
-    @Column(name = "image_url")
-    private List<String> imageUrls;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardImage> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -41,24 +43,50 @@ public class Board extends Timestamped {
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long viewCount = 0L;
 
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long commentCount = 0L;
+
     @Builder
     public Board(String title, String content, Category category, List<String> imageUrls, User user) {
         this.title = title;
         this.content = content;
         this.category = category;
-        this.imageUrls = imageUrls;
         this.user = user;
         this.viewCount = 0L;
+        this.commentCount = 0L;
+        setImagesFromUrls(imageUrls);
     }
 
     public void update(String title, String content, Category category, List<String> imageUrls) {
         this.title = title;
         this.content = content;
         this.category = category;
-        this.imageUrls = imageUrls;
+        setImagesFromUrls(imageUrls);
     }
 
     public void incrementViewCount() {
         this.viewCount++;
+    }
+
+    // Backward compatible getter used by DTOs and services
+    public List<String> getImageUrls() {
+        return images.stream().map(BoardImage::getImageUrl).collect(Collectors.toList());
+    }
+
+    public void setImagesFromUrls(List<String> imageUrls) {
+        this.images.clear();
+        if (imageUrls == null) return;
+        for (String url : imageUrls) {
+            BoardImage image = new BoardImage(new BoardImageId(null, url), this);
+            this.images.add(image);
+        }
+    }
+
+    public void incrementCommentCount() {
+        this.commentCount++;
+    }
+
+    public void decrementCommentCount() {
+        this.commentCount--;
     }
 }

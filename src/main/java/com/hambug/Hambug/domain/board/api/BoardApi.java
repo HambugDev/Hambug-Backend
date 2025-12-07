@@ -22,7 +22,9 @@ import java.util.List;
 public interface BoardApi {
 
     @Operation(summary = "게시글 전체 조회", description = "전체 게시글을 조회합니다.")
-    CommonResponse<List<BoardResponseDTO.BoardResponse>> getBoards();
+    CommonResponse<BoardResponseDTO.BoardAllResponse> getBoards(@RequestParam(required = false) Long lastId,
+                                                                @RequestParam(defaultValue = "10") int limit,
+                                                                @RequestParam(defaultValue = "DESC") String order);
 
     @Operation(summary = "카테고리별 게시글 조회", description = "카테고리별로 게시글을 조회합니다.")
     CommonResponse<List<BoardResponseDTO.BoardResponse>> getBoardsByCategory(@RequestParam Category category);
@@ -35,7 +37,7 @@ public interface BoardApi {
     @Operation(summary = "게시글 생성", description = "새로운 게시글을 생성합니다.")
     CommonResponse<BoardResponseDTO.BoardResponse> createBoard(
             @RequestBody(description = "게시글 생성 요청", required = true,
-                    content = @Content(schema = @Schema(implementation = BoardRequestDTO.BoardCreateRequest.class))) 
+                    content = @Content(schema = @Schema(implementation = BoardRequestDTO.BoardCreateRequest.class)))
             @org.springframework.web.bind.annotation.RequestBody BoardRequestDTO.BoardCreateRequest request,
             @AuthenticationPrincipal PrincipalDetails principalDetails);
 

@@ -47,6 +47,7 @@ public class CommentService {
         commentRepository.save(comment);
 
         boardTrendingService.addCommentScore(boardId);
+        board.incrementCommentCount();
 
         return new CommentResponseDTO.CommentResponse(comment);
     }
@@ -64,6 +65,7 @@ public class CommentService {
     public void deleteComment(Long boardId, Long commentId) {
         Comment comment = findComment(commentId);
         validateCommentBoard(comment, boardId);
+        comment.getBoard().decrementCommentCount();
         commentRepository.delete(comment);
     }
 

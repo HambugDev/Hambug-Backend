@@ -13,6 +13,7 @@ import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.exception.custom.NotFoundException;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -33,12 +33,30 @@ public class CommentService {
     private final BoardTrendingService boardTrendingService;
 
     @Transactional(readOnly = true)
-    public List<CommentResponseDTO.CommentResponse> findCommentsByBoard(Long boardId) {
+    public CommentResponseDTO.CommentAllResponse findCommentsByBoard(Long boardId, Long lastId, int limit, String order) {
+
         validateBoard(boardId);
-        return commentRepository.findAllByBoardId(boardId).stream()
-                .map(CommentResponseDTO.CommentResponse::new)
-                .collect(Collectors.toList());
+
+        Slice<Tuple> slice = commentRepository.findByBoardIdSlice(boardId, lastId, limit, order);
+
+        List<CommentResponseDTO.CommentResponse> comments = slice.getContent().stream()
+                .map(tuple -> new CommentResponseDTO.CommentResponse(
+                        tuple.get(0, Long.class),
+                        tuple.get(1, String.class),
+                        tuple.get(2, Long.class),
+                        tuple.get(3, String.class),
+                        tuple.get(4, String.class),
+                        null,
+                        null
+                ))
+                .toList();
+
+        Long nextCursorId = comments.isEmpty() ? null : comments.get(comments.size() - 1).id();
+        Boolean hasNext = slice.hasNext();
+
+        return new CommentResponseDTO.CommentAllResponse(comments, nextCursorId, hasNext);
     }
+
 
     @Transactional
     public CommentResponseDTO.CommentResponse createComment(Long boardId, Long userId, CommentRequestDTO.CommentCreateRequest request) {

@@ -9,14 +9,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "댓글 API", description = "댓글 CRUD 관련 API")
 public interface CommentApi {
 
     @Operation(summary = "댓글 목록 조회", description = "게시글 ID로 댓글 목록을 조회합니다.")
-    CommonResponse<List<CommentResponseDTO.CommentResponse>> getComments(@PathVariable("boardId") Long boardId);
+    CommonResponse<CommentResponseDTO.CommentAllResponse> getComments(@PathVariable("boardId") Long boardId, @RequestParam(required = false) Long lastId,
+                                                                      @RequestParam(defaultValue = "10") int limit,
+                                                                      @RequestParam(defaultValue = "DESC") String order);
 
     @Operation(summary = "댓글 생성", description = "게시글에 새로운 댓글을 생성합니다.")
     CommonResponse<CommentResponseDTO.CommentResponse> createComment(

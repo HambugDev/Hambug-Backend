@@ -4,6 +4,8 @@ import com.hambug.Hambug.domain.comment.entity.Comment;
 import com.hambug.Hambug.domain.comment.entity.QComment;
 import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.user.entity.QUser;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -53,5 +55,39 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
         ).toList();
 
         return new SliceImpl<>(list, PageRequest.of(0, limit), hasNext);
+    }
+
+    @Override
+    public Slice<Tuple> findByBoardIdSlice(Long boardId, Long lastId, int limit, String order) {
+        QComment comment = QComment.comment;
+        QUser user = QUser.user;
+
+        boolean isAsc = "asc".equalsIgnoreCase(order);
+
+        BooleanExpression predicate = null;
+        if (lastId != null) {
+            predicate = isAsc ? comment.id.gt(lastId) : comment.id.lt(lastId);
+        }
+
+        List<Tuple> results = factory.select(
+                        comment.id,
+                        comment.content,
+                        comment.user.id,
+                        comment.user.nickname,
+                        comment.user.profileImageUrl
+                ).from(comment).join(user).on(comment.user.id.eq(user.id))
+                .where(comment.board.id.eq(boardId)).where(predicate)
+                .orderBy(isAsc ? comment.id.asc() : comment.id.desc())
+                .limit(limit + 1)
+                .fetch();
+
+
+        boolean hasNext = false;
+        if (results.size() > limit) {
+            results = results.subList(0, limit);
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(results, PageRequest.of(0, limit), hasNext);
     }
 }

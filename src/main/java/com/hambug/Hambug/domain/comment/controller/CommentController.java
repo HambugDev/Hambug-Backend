@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -27,8 +25,11 @@ public class CommentController implements CommentApi {
 
     @Override
     @GetMapping
-    public CommonResponse<List<CommentResponseDTO.CommentResponse>> getComments(@PathVariable("boardId") Long boardId) {
-        List<CommentResponseDTO.CommentResponse> comments = commentService.findCommentsByBoard(boardId);
+    public CommonResponse<CommentResponseDTO.CommentAllResponse> getComments(@PathVariable("boardId") Long boardId,
+                                                                             @RequestParam(required = false) Long lastId,
+                                                                             @RequestParam(defaultValue = "10") int limit,
+                                                                             @RequestParam(defaultValue = "DESC") String order) {
+        CommentResponseDTO.CommentAllResponse comments = commentService.findCommentsByBoard(boardId, lastId, limit, order.toLowerCase());
         return CommonResponse.ok(comments);
     }
 

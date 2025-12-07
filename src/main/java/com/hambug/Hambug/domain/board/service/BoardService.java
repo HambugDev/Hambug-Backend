@@ -107,7 +107,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponseDTO.BoardResponse findBoardById(Long id, Long userId) {
+    public BoardResponseDTO.BoardDetailResponse findBoardById(Long id, Long userId) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
@@ -125,7 +125,7 @@ public class BoardService {
             }
         }
 
-        return new BoardResponseDTO.BoardResponse(board, likeCount, isLiked);
+        return new BoardResponseDTO.BoardDetailResponse(board, likeCount, isLiked);
     }
 
     @Transactional

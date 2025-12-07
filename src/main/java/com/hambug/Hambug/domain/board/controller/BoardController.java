@@ -45,7 +45,7 @@ public class BoardController implements BoardApi {
 
     @Override
     @GetMapping("/{id}")
-    public CommonResponse<BoardResponseDTO.BoardResponse> getBoard(
+    public CommonResponse<BoardResponseDTO.BoardDetailResponse> getBoard(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal(errorOnInvalidType = false) PrincipalDetails principalDetails) {
 
@@ -53,7 +53,7 @@ public class BoardController implements BoardApi {
                 ? principalDetails.getUser().getUserId()
                 : null;
 
-        BoardResponseDTO.BoardResponse board = boardService.findBoardById(id, userId);
+        BoardResponseDTO.BoardDetailResponse board = boardService.findBoardById(id, userId);
         return CommonResponse.ok(board);
     }
 

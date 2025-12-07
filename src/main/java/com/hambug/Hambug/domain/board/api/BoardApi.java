@@ -30,7 +30,7 @@ public interface BoardApi {
     CommonResponse<List<BoardResponseDTO.BoardResponse>> getBoardsByCategory(@RequestParam Category category);
 
     @Operation(summary = "게시글 상세 조회", description = "게시글 ID로 특정 게시글을 조회합니다. 로그인한 경우 좋아요 여부가 포함됩니다.")
-    CommonResponse<BoardResponseDTO.BoardResponse> getBoard(
+    CommonResponse<BoardResponseDTO.BoardDetailResponse> getBoard(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal(errorOnInvalidType = false) PrincipalDetails principalDetails);
 

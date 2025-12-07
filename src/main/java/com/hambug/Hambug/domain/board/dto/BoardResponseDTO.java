@@ -68,4 +68,40 @@ public class BoardResponseDTO {
             );
         }
     }
+
+    public record BoardDetailResponse(
+            Long id,
+            String title,
+            String content,
+            Category category,
+            List<String> imageUrls,
+            String authorNickname,
+            String authorProfileImageUrl,
+            Long authorId,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            Long viewCount,
+            Long likeCount,
+            Long commentCount,
+            Boolean isLiked
+    ) {
+        public BoardDetailResponse(Board board, Long likeCount, Boolean isLiked) {
+            this(
+                    board.getId(),
+                    board.getTitle(),
+                    board.getContent(),
+                    board.getCategory(),
+                    board.getImageUrls(),
+                    board.getUser().getNickname(),
+                    board.getUser().getProfileImageUrl(), // 상세 화면에 필요
+                    board.getUser().getId(),
+                    board.getCreatedAt(),
+                    board.getModifiedAt(),
+                    board.getViewCount(),
+                    likeCount,
+                    board.getCommentCount(),
+                    isLiked
+            );
+        }
+    }
 }

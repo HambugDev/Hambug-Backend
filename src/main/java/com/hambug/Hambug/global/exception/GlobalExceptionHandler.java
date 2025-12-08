@@ -1,10 +1,9 @@
 package com.hambug.Hambug.global.exception;
 
 import com.hambug.Hambug.global.exception.custom.AlreadyEntityException;
+import com.hambug.Hambug.global.exception.custom.AuthenticationException;
 import com.hambug.Hambug.global.exception.custom.JwtException;
 import com.hambug.Hambug.global.exception.custom.NotFoundException;
-import com.hambug.Hambug.global.exception.ErrorCode;
-import com.hambug.Hambug.global.exception.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -38,5 +37,11 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleAlreadyException(AlreadyEntityException e) {
         ErrorResponse response = ErrorResponse.of(e.getErrorCode(), e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException e) {
+        ErrorResponse response = ErrorResponse.of(e.getErrorCode(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 }

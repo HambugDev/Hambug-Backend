@@ -44,6 +44,8 @@ public class KakaoOauthService implements Oauth2Service {
                 .bodyToMono(KakaoUserResponse.class)
                 .block();
 
+        log.info("xhzms : {}", accessToken);
+
         if (me == null) {
             throw new RuntimeException("카카오 사용자 정보를 가져오지 못했습니다.");
         }

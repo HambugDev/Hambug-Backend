@@ -65,6 +65,7 @@ public class AuthController implements AuthApi {
     @PostMapping("/login/{provider}")
     public CommonResponse<AuthResponseDto.LoginResponse> login(@PathVariable String provider,
                                                                @RequestBody @Valid Oauth2RequestDTO.LoginAuthCode payload) {
+        oauth2ServiceFactory.validateProvider(provider, payload.accessToken());
         UserDto userDto = oauth2ServiceFactory.getService(provider).login(payload.accessToken());
 
         PrincipalDetails principal = new PrincipalDetails(userDto);

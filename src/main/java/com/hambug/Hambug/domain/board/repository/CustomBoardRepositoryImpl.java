@@ -4,6 +4,7 @@ import com.hambug.Hambug.domain.board.entity.Board;
 import com.hambug.Hambug.domain.board.entity.Category;
 import com.hambug.Hambug.domain.board.entity.QBoard;
 import com.hambug.Hambug.domain.board.entity.QBoardImage;
+import com.hambug.Hambug.domain.like.entity.QBoardLike;
 import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
@@ -72,6 +73,7 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
         QBoard board = QBoard.board;
         QUser user = QUser.user;
         QBoardImage boardImage = QBoardImage.boardImage;
+        QBoardLike boardLike = QBoardLike.boardLike;
 
         boolean isAsc = "asc".equalsIgnoreCase(order);
 
@@ -93,19 +95,23 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
                         board.title,
                         board.content,
                         board.category,
-                        boardImage.id.imageUrl,
                         user.nickname,
                         user.id,
                         board.createdAt,
                         board.modifiedAt,
                         board.viewCount,
-                        board.commentCount
+                        board.commentCount,
+                        boardLike.id.countDistinct().as("likeCount"),
+                        boardImage.id.countDistinct().as("imageCount")
+
                 )
                 .from(board)
                 .leftJoin(board.user, user)
                 .leftJoin(board.images, boardImage)
+                .leftJoin(boardLike).on(boardLike.board.id.eq(board.id))
                 .where(builder)
                 .orderBy(isAsc ? board.createdAt.asc() : board.createdAt.desc())
+                .groupBy(board.id)
                 .limit(limit + 1)
                 .fetch();
 
@@ -119,4 +125,34 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     }
 
 
+    public List<Tuple> findAllByIds(List<Long> ids) {
+        QBoard board = QBoard.board;
+        QUser user = QUser.user;
+        QBoardImage boardImage = QBoardImage.boardImage;
+        QBoardLike boardLike = QBoardLike.boardLike;
+
+        return factory
+                .select(
+                        board.id,
+                        board.title,
+                        board.content,
+                        board.category,
+                        user.nickname,
+                        user.id,
+                        board.createdAt,
+                        board.modifiedAt,
+                        board.viewCount,
+                        board.commentCount,
+                        boardLike.id.countDistinct().as("likeCount"),
+                        boardImage.id.countDistinct().as("imageCount")
+
+                )
+                .from(board)
+                .leftJoin(board.user, user)
+                .leftJoin(board.images, boardImage)
+                .leftJoin(boardLike).on(boardLike.board.id.eq(board.id))
+                .where(board.id.in(ids))
+                .groupBy(board.id)
+                .fetch();
+    }
 }

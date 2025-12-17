@@ -31,6 +31,11 @@ public class BoardTrendingScheduler {
 
 
     @Scheduled(cron = "0 0 0 * * *")
+    public void purgeOldDailyKeys() {
+        boardTrendingService.purgeOldDailyKeys();
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
     public void selectDailyRecommendedBurgers() {
         log.info("=== 오늘의 추천 햄버거 선택 스케줄러 실행 ===");
         burgerService.selectTodayRecommendedBurgers();

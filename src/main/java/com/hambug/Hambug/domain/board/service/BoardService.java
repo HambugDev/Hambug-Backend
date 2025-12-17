@@ -17,8 +17,10 @@ import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.s3.service.S3Service;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -48,51 +49,9 @@ public class BoardService {
 
         var slice = boardRepository.findAllSlice(lastId, limit, order, category);
 
-        var boardMap = new LinkedHashMap<Long, BoardResponseDTO.BoardResponse>();
-
-        slice.getContent().forEach(tuple -> {
-
-            var boardId = tuple.get(0, Long.class);
-            var title = tuple.get(1, String.class);
-            var content = tuple.get(2, String.class);
-            var _category = tuple.get(3, Category.class);
-            var imageUrl = tuple.get(4, String.class);
-            var nickname = tuple.get(5, String.class);
-            var authorId = tuple.get(6, Long.class);
-            var createdAt = tuple.get(7, LocalDateTime.class);
-            var updatedAt = tuple.get(8, LocalDateTime.class);
-            var viewCount = tuple.get(9, Long.class);
-            var commentCount = tuple.get(10, Long.class);
-
-            boardMap.computeIfAbsent(boardId, key ->
-                    new BoardResponseDTO.BoardResponse(
-                            boardId,
-                            title,
-                            content,
-                            _category,
-                            new ArrayList<>(),
-                            nickname,
-                            authorId,
-                            createdAt,
-                            updatedAt,
-                            viewCount,
-                            0L,
-                            commentCount,
-                            false
-                    ));
-
-            if (imageUrl != null && !imageUrl.isBlank()) {
-                boardMap.get(boardId).imageUrls().add(imageUrl);
-            }
-        });
-
-        var boardResponses = new ArrayList<>(boardMap.values());
-
-        Long nextCursorId = boardResponses.isEmpty() ? null : boardResponses.get(boardResponses.size() - 1).id();
-        Boolean hasNext = slice.hasNext();
-
-        return new BoardResponseDTO.BoardAllResponse(boardResponses, nextCursorId, hasNext);
+        return getBoardAllResponse(slice);
     }
+
 
     public List<BoardResponseDTO.BoardResponse> findBoardsByCategory(Category category) {
         return boardRepository.findByCategory(category).stream()
@@ -245,25 +204,79 @@ public class BoardService {
         return boardRepository.findByUserIdSlice(userId, query.lastId(), query.limit(), query.order());
     }
 
+    @Transactional(readOnly = true)
     public List<BoardResponseDTO.BoardResponse> findTrendingBoards(int limit) {
         List<Long> topBoardIds = boardTrendingService.getTopBoardIds(limit);
-
         if (topBoardIds.isEmpty()) {
             return List.of();
         }
+        List<Tuple> allByIds = boardRepository.findAllByIds(topBoardIds);
+        return getBoardResponses(allByIds);
+    }
 
-        List<Board> boards = boardRepository.findAllById(topBoardIds);
+    private BoardResponseDTO.@NonNull BoardAllResponse getBoardAllResponse(Slice<Tuple> slice) {
+        var boardResponses = getBoardResponses(slice.getContent());
 
-        Map<Long, Board> boardMap = boards.stream()
-                .collect(Collectors.toMap(Board::getId, board -> board));
+        Long nextCursorId = boardResponses.isEmpty() ? null : boardResponses.get(boardResponses.size() - 1).id();
+        Boolean hasNext = slice.hasNext();
 
-        return topBoardIds.stream()
-                .map(boardMap::get)
-                .filter(board -> board != null)
-                .map(board -> {
-                    long likeCount = boardLikeRepository.countByBoardId(board.getId());
-                    return new BoardResponseDTO.BoardResponse(board, likeCount, false);
-                })
-                .collect(Collectors.toList());
+        return new BoardResponseDTO.BoardAllResponse(boardResponses, nextCursorId, hasNext);
+    }
+
+    private @NonNull ArrayList<BoardResponseDTO.BoardResponse> getBoardResponses(List<Tuple> datas) {
+        var boardMap = new LinkedHashMap<Long, BoardResponseDTO.BoardResponse>();
+        var imageCountMap = new LinkedHashMap<Long, Long>();
+
+        datas.forEach(tuple -> {
+
+            var boardId = tuple.get(0, Long.class);
+            var title = tuple.get(1, String.class);
+            var content = tuple.get(2, String.class);
+            var _category = tuple.get(3, Category.class);
+            // 이미지 URL은 집계로 대체하여 별도 조회할 예정이므로 여기서는 사용하지 않음
+            var nickname = tuple.get(4, String.class);
+            var authorId = tuple.get(5, Long.class);
+            var createdAt = tuple.get(6, LocalDateTime.class);
+            var updatedAt = tuple.get(7, LocalDateTime.class);
+            var viewCount = tuple.get(8, Long.class);
+            var commentCount = tuple.get(9, Long.class);
+            var likeCount = tuple.get(10, Long.class);
+            var imageCount = tuple.get(11, Long.class);
+
+            boardMap.computeIfAbsent(boardId, key ->
+                    new BoardResponseDTO.BoardResponse(
+                            boardId,
+                            title,
+                            content,
+                            _category,
+                            new ArrayList<>(),
+                            nickname,
+                            authorId,
+                            createdAt,
+                            updatedAt,
+                            viewCount,
+                            likeCount != null ? likeCount : 0L,
+                            commentCount,
+                            false
+                    ));
+
+            // 이미지 개수 기록 (null 안전 처리)
+            imageCountMap.put(boardId, imageCount != null ? imageCount : 0L);
+        });
+
+        // 이미지가 있는 게시글만 별도 조회하여 이미지 URL 목록 채우기
+        imageCountMap.forEach((bId, cnt) -> {
+            if (cnt != null && cnt > 0) {
+                // 필요 시 개별 조회 (간단 구현, 추후 배치 조회로 최적화 가능)
+                boardRepository.findById(bId).ifPresent(board -> {
+                    var urls = board.getImageUrls();
+                    if (urls != null && !urls.isEmpty()) {
+                        boardMap.get(bId).imageUrls().addAll(urls);
+                    }
+                });
+            }
+        });
+
+        return new ArrayList<>(boardMap.values());
     }
 }

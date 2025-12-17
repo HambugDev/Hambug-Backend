@@ -29,7 +29,7 @@ public class BoardLikeService {
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
-
+        ;
         boolean isLiked;
 
         // 이미 좋아요를 눌렀는지 확인

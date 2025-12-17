@@ -26,13 +26,13 @@ public class SwaggerConfig {
                 .bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER)
                 .name("Authorization")
-                .description("Access Token을 입력하세요. (예: `Bearer eyJhbGciOi...`)");
+                .description("Access Token을 입력하세요. (예: `eyJhbGciOi...`)");
 
-        SecurityScheme refreshTokenScheme = new SecurityScheme()
-                .type(SecurityScheme.Type.APIKEY)
-                .in(SecurityScheme.In.HEADER)
-                .name("RefreshToken")
-                .description("Refresh Token을 입력하세요. (선택)");
+//        SecurityScheme refreshTokenScheme = new SecurityScheme()
+//                .type(SecurityScheme.Type.APIKEY)
+//                .in(SecurityScheme.In.HEADER)
+//                .name("RefreshToken")
+//                .description("Refresh Token을 입력하세요. (선택)");
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
                 .addList("Authorization")
@@ -45,8 +45,7 @@ public class SwaggerConfig {
                         .version("v1"))
                 .servers(List.of(httpsServer))
                 .components(new Components()
-                        .addSecuritySchemes("Authorization", accessTokenScheme)
-                        .addSecuritySchemes("RefreshToken", refreshTokenScheme))
+                        .addSecuritySchemes("Authorization", accessTokenScheme))
                 .addSecurityItem(securityRequirement);
     }
 }

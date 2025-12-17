@@ -44,9 +44,9 @@ public class BoardService {
     private final BoardTrendingService boardTrendingService;
 
     @Transactional(readOnly = true)
-    public BoardResponseDTO.BoardAllResponse findAllBoards(Long lastId, int limit, String order) {
+    public BoardResponseDTO.BoardAllResponse findAllBoards(Long lastId, int limit, String order, Category category) {
 
-        var slice = boardRepository.findAllSlice(lastId, limit, order);
+        var slice = boardRepository.findAllSlice(lastId, limit, order, category);
 
         var boardMap = new LinkedHashMap<Long, BoardResponseDTO.BoardResponse>();
 
@@ -55,7 +55,7 @@ public class BoardService {
             var boardId = tuple.get(0, Long.class);
             var title = tuple.get(1, String.class);
             var content = tuple.get(2, String.class);
-            var category = tuple.get(3, Category.class);
+            var _category = tuple.get(3, Category.class);
             var imageUrl = tuple.get(4, String.class);
             var nickname = tuple.get(5, String.class);
             var authorId = tuple.get(6, Long.class);
@@ -69,7 +69,7 @@ public class BoardService {
                             boardId,
                             title,
                             content,
-                            category,
+                            _category,
                             new ArrayList<>(),
                             nickname,
                             authorId,

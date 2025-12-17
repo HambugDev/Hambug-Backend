@@ -5,8 +5,7 @@ import lombok.Getter;
 @Getter
 public enum Category {
     FREE_TALK("자유잡담"),
-    FRANCHISE("프랜차이즈"),
-    HANDMADE("수제버거"),
+    REVIEW("햄버거 리뷰"),
     RECOMMENDATION("맛집추천");
 
     private final String description;

@@ -27,7 +27,10 @@ public interface BoardApi {
                                                                 @RequestParam(defaultValue = "DESC") String order);
 
     @Operation(summary = "카테고리별 게시글 조회", description = "카테고리별로 게시글을 조회합니다.")
-    CommonResponse<List<BoardResponseDTO.BoardResponse>> getBoardsByCategory(@RequestParam Category category);
+    CommonResponse<BoardResponseDTO.BoardAllResponse> getBoardsByCategory(@RequestParam(required = false) Long lastId,
+                                                                          @RequestParam(defaultValue = "10") int limit,
+                                                                          @RequestParam(defaultValue = "DESC") String order,
+                                                                          @RequestParam Category category);
 
     @Operation(summary = "게시글 상세 조회", description = "게시글 ID로 특정 게시글을 조회합니다. 로그인한 경우 좋아요 여부가 포함됩니다.")
     CommonResponse<BoardResponseDTO.BoardDetailResponse> getBoard(

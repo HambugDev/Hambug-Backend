@@ -31,16 +31,19 @@ public class BoardController implements BoardApi {
     public CommonResponse<BoardResponseDTO.BoardAllResponse> getBoards(@RequestParam(required = false) Long lastId,
                                                                        @RequestParam(defaultValue = "10") int limit,
                                                                        @RequestParam(defaultValue = "DESC") String order) {
-        BoardResponseDTO.BoardAllResponse allBoards = boardService.findAllBoards(lastId, limit, order.toLowerCase());
+        BoardResponseDTO.BoardAllResponse allBoards = boardService.findAllBoards(lastId, limit, order.toLowerCase(), null);
         return CommonResponse.ok(allBoards);
 
     }
 
     @Override
     @GetMapping("/category")
-    public CommonResponse<List<BoardResponseDTO.BoardResponse>> getBoardsByCategory(@RequestParam Category category) {
-        List<BoardResponseDTO.BoardResponse> boards = boardService.findBoardsByCategory(category);
-        return CommonResponse.ok(boards);
+    public CommonResponse<BoardResponseDTO.BoardAllResponse> getBoardsByCategory(@RequestParam(required = false) Long lastId,
+                                                                                 @RequestParam(defaultValue = "10") int limit,
+                                                                                 @RequestParam(defaultValue = "DESC") String order,
+                                                                                 @RequestParam Category category) {
+        BoardResponseDTO.BoardAllResponse allBoards = boardService.findAllBoards(lastId, limit, order.toLowerCase(), category);
+        return CommonResponse.ok(allBoards);
     }
 
     @Override

@@ -1,12 +1,13 @@
 package com.hambug.Hambug.domain.board.repository;
 
 import com.hambug.Hambug.domain.board.entity.Board;
+import com.hambug.Hambug.domain.board.entity.Category;
 import com.hambug.Hambug.domain.board.entity.QBoard;
 import com.hambug.Hambug.domain.board.entity.QBoardImage;
 import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.user.entity.QUser;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -67,16 +68,23 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     }
 
     @Override
-    public Slice<Tuple> findAllSlice(Long lastId, int limit, String order) {
+    public Slice<Tuple> findAllSlice(Long lastId, int limit, String order, Category category) {
         QBoard board = QBoard.board;
         QUser user = QUser.user;
         QBoardImage boardImage = QBoardImage.boardImage;
 
         boolean isAsc = "asc".equalsIgnoreCase(order);
 
-        BooleanExpression predicate = null;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 페이징 조건
         if (lastId != null) {
-            predicate = isAsc ? board.id.gt(lastId) : board.id.lt(lastId);
+            builder.and(isAsc ? board.id.gt(lastId) : board.id.lt(lastId));
+        }
+
+        // 카테고리 조건
+        if (category != null) {
+            builder.and(board.category.eq(category));
         }
 
         List<Tuple> results = factory
@@ -95,9 +103,9 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
                 )
                 .from(board)
                 .leftJoin(board.user, user)
-                .leftJoin(board.images, boardImage)         // 핵심
-                .where(predicate)
-                .orderBy(isAsc ? board.id.asc() : board.id.desc())
+                .leftJoin(board.images, boardImage)
+                .where(builder)
+                .orderBy(isAsc ? board.createdAt.asc() : board.createdAt.desc())
                 .limit(limit + 1)
                 .fetch();
 

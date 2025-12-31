@@ -89,4 +89,15 @@ public class Board extends Timestamped {
     public void decrementCommentCount() {
         this.commentCount--;
     }
+
+    public Boolean isAuthor(Long userId) {
+        if (userId == null || this.user == null) {
+            return false;
+        }
+        try {
+            return this.user.getId().equals(userId);
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            return false;
+        }
+    }
 }

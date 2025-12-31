@@ -39,8 +39,8 @@ public class BoardResponseDTO {
                     board.getContent(),
                     board.getCategory(),
                     board.getImageUrls(),
-                    board.getUser().getNickname(),
-                    board.getUser().getId(),
+                    getNicknameSafely(board),
+                    getAuthorIdSafely(board),
                     board.getCreatedAt(),
                     board.getModifiedAt(),
                     board.getViewCount(),
@@ -57,8 +57,8 @@ public class BoardResponseDTO {
                     board.getContent(),
                     board.getCategory(),
                     board.getImageUrls(),
-                    board.getUser().getNickname(),
-                    board.getUser().getId(),
+                    getNicknameSafely(board),
+                    getAuthorIdSafely(board),
                     board.getCreatedAt(),
                     board.getModifiedAt(),
                     board.getViewCount(),
@@ -66,6 +66,22 @@ public class BoardResponseDTO {
                     board.getCommentCount(),
                     isLiked
             );
+        }
+
+        private static String getNicknameSafely(Board board) {
+            try {
+                return board.getUser() != null ? board.getUser().getNickname() : "알 수 없는 사용자";
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                return "알 수 없는 사용자";
+            }
+        }
+
+        private static Long getAuthorIdSafely(Board board) {
+            try {
+                return board.getUser() != null ? board.getUser().getId() : null;
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                return null;
+            }
         }
     }
 
@@ -83,25 +99,51 @@ public class BoardResponseDTO {
             Long viewCount,
             Long likeCount,
             Long commentCount,
-            Boolean isLiked
+            Boolean isLiked,
+            Boolean isAuthor
     ) {
-        public BoardDetailResponse(Board board, Long likeCount, Boolean isLiked) {
+        public BoardDetailResponse(Board board, Long likeCount, Boolean isLiked, Boolean isAuthor) {
             this(
                     board.getId(),
                     board.getTitle(),
                     board.getContent(),
                     board.getCategory(),
                     board.getImageUrls(),
-                    board.getUser().getNickname(),
-                    board.getUser().getProfileImageUrl(), // 상세 화면에 필요
-                    board.getUser().getId(),
+                    getNicknameSafely(board),
+                    getProfileImageUrlSafely(board),
+                    getAuthorIdSafely(board),
                     board.getCreatedAt(),
                     board.getModifiedAt(),
                     board.getViewCount(),
                     likeCount,
                     board.getCommentCount(),
-                    isLiked
+                    isLiked,
+                    isAuthor
             );
+        }
+
+        private static String getNicknameSafely(Board board) {
+            try {
+                return board.getUser() != null ? board.getUser().getNickname() : "알 수 없는 사용자";
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                return "알 수 없는 사용자";
+            }
+        }
+
+        private static String getProfileImageUrlSafely(Board board) {
+            try {
+                return board.getUser() != null ? board.getUser().getProfileImageUrl() : null;
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                return null;
+            }
+        }
+
+        private static Long getAuthorIdSafely(Board board) {
+            try {
+                return board.getUser() != null ? board.getUser().getId() : null;
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                return null;
+            }
         }
     }
 }

@@ -83,8 +83,7 @@ public class BoardService {
                 isLiked = boardLikeRepository.existsByUserAndBoard(user, board);
             }
         }
-
-        return new BoardResponseDTO.BoardDetailResponse(board, likeCount, isLiked);
+        return new BoardResponseDTO.BoardDetailResponse(board, likeCount, isLiked, board.isAuthor(userId));
     }
 
     @Transactional
@@ -142,7 +141,7 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
-        if (!board.getUser().getId().equals(userId)) {
+        if (!board.isAuthor(userId)) {
             throw new UnauthorizedBoardAccessException(ErrorCode.UNAUTHORIZED_BOARD_ACCESS);
         }
 
@@ -156,7 +155,7 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
-        if (!board.getUser().getId().equals(userId)) {
+        if (!board.isAuthor(userId)) {
             throw new UnauthorizedBoardAccessException(ErrorCode.UNAUTHORIZED_BOARD_ACCESS);
         }
 
@@ -184,7 +183,7 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardNotFoundException(ErrorCode.BOARD_NOT_FOUND));
 
-        if (!board.getUser().getId().equals(userId)) {
+        if (!board.isAuthor(userId)) {
             throw new UnauthorizedBoardAccessException(ErrorCode.UNAUTHORIZED_BOARD_ACCESS);
         }
 

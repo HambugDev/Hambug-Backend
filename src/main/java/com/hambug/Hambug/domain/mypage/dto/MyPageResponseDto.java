@@ -30,15 +30,21 @@ public class MyPageResponseDto {
             Long id,
             String title,
             String content,
+            Integer viewCount,
+            Integer commentCount,
+            Integer likeCount,
             Category category,
             List<String> imageUrls,
             LocalDateTime createAt
     ) {
-        public static MyBoardResponse from(Board board) {
+        public static MyBoardResponse from(Board board, Long likeCount) {
             return MyBoardResponse.builder()
                     .id(board.getId())
                     .title(board.getTitle())
                     .content(board.getContent())
+                    .viewCount(board.getViewCount() != null ? board.getViewCount().intValue() : 0)
+                    .commentCount(board.getCommentCount() != null ? board.getCommentCount().intValue() : 0)
+                    .likeCount(likeCount != null ? likeCount.intValue() : 0)
                     .category(board.getCategory())
                     .imageUrls(board.getImageUrls() != null ? board.getImageUrls() : List.of())
                     .createAt(board.getCreatedAt())

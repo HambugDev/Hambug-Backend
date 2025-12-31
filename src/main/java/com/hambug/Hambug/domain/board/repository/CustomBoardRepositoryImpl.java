@@ -16,10 +16,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.hambug.Hambug.domain.user.entity.QUser.user;
+import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,6 +28,7 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     @Override
     public Slice<MyPageResponseDto.MyBoardResponse> findByUserIdSlice(Long userId, Long lastId, int limit, String order) {
         QBoard board = QBoard.board;
+        QBoardLike boardLike = QBoardLike.boardLike;
 
         boolean isAsc = "asc".equalsIgnoreCase(order);
 
@@ -42,9 +41,15 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
             }
         }
 
-        List<Board> results = factory.selectFrom(board)
-                .join(user).on(board.user.id.eq(user.id))
+        List<Tuple> results = factory
+                .select(
+                        board,
+                        boardLike.id.countDistinct().as("likeCount")
+                )
+                .from(board)
+                .leftJoin(boardLike).on(boardLike.board.id.eq(board.id))
                 .where(predicate)
+                .groupBy(board.id)
                 .orderBy(isAsc ? board.id.asc() : board.id.desc())
                 .limit(limit + 1)
                 .fetch();
@@ -54,16 +59,13 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
             results.remove(limit);
             hasNext = true;
         }
-        List<MyPageResponseDto.MyBoardResponse> content =
-                results.stream().map(b -> new MyPageResponseDto.MyBoardResponse(
-                        b.getId(),
-                        b.getTitle(),
-                        b.getContent(),
-                        b.getCategory(),
-                        b.getImageUrls() != null ? new ArrayList<>(b.getImageUrls()) : java.util.List.of(),
-                        b.getCreatedAt()
-                )).toList();
 
+        List<MyPageResponseDto.MyBoardResponse> content =
+                results.stream().map(tuple -> {
+                    Board b = tuple.get(board);
+                    Long likeCount = tuple.get(1, Long.class);
+                    return MyPageResponseDto.MyBoardResponse.from(Objects.requireNonNull(b), likeCount);
+                }).toList();
 
         return new SliceImpl<>(content, PageRequest.of(0, limit), hasNext);
     }

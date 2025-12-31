@@ -29,11 +29,11 @@ public class UserServiceImpl implements UserService {
     private static final String NICKNAME_PREFIX = "햄린이_";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final long TEN_POW_10 = 1_000_000_0000L;
+    private static final String DEFAULT_PROFILE_IMAGE = "https://s3.ap-northeast-2.amazonaws.com/dev.hambug.com/default_profile.svg";
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final S3Service s3Service;
-
 
     @Override
     public UserDto signUpOrLogin(Oauth2UserInfo userInfo) {
@@ -67,13 +67,12 @@ public class UserServiceImpl implements UserService {
         return UserDto.toDto(user);
     }
 
-
     @SneakyThrows
     @Override
     public UserDto updateProfileImage(Long userId, Long authUserId, MultipartFile file) {
         validOwner(userId, authUserId);
         User user = getUser(userId);
-        String uploadImage = s3Service.uploadImage(file);
+        String uploadImage = isProfileFile(file) ? DEFAULT_PROFILE_IMAGE : s3Service.uploadImage(file);
         user.updateProfileImage(uploadImage);
         return UserDto.toDto(user);
     }
@@ -115,5 +114,9 @@ public class UserServiceImpl implements UserService {
         long number = Math.floorMod(SECURE_RANDOM.nextLong(), TEN_POW_10);
         String suffix = String.format("%010d", number);
         return NICKNAME_PREFIX + suffix;
+    }
+
+    private boolean isProfileFile(MultipartFile file) {
+        return file == null || file.isEmpty();
     }
 }

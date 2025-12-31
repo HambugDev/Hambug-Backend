@@ -27,8 +27,11 @@ public interface UserApi {
                                                    content = @Content(schema = @Schema(implementation = UpdateUserNicknameReqDto.class))) UpdateUserNicknameReqDto body,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails);
 
-    @Operation(summary = "프로필 이미지 변경 (마이페이지에서도 사용)", description = "멀티파트로 프로필 이미지를 업로드하여 변경합니다.")
+    @Operation(summary = "프로필 이미지 변경 (마이페이지에서도 사용)", description = """
+            - multipart/form-data로 프로필 이미지를 업로드합니다.
+            - file을 보내지 않으면 기본 프로필 이미지로 변경됩니다.
+            """)
     CommonResponse<UserDto> updateProfile(@PathVariable("id") Long id,
-                                          @RequestPart(value = "file") MultipartFile file,
+                                          @RequestPart(value = "file", required = false) MultipartFile file,
                                           @AuthenticationPrincipal PrincipalDetails principalDetails);
 }

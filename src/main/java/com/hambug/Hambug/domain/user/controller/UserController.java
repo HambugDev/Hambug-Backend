@@ -43,7 +43,7 @@ public class UserController implements UserApi {
 
     @PutMapping(value = "/{id}/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResponse<UserDto> updateProfile(@PathVariable("id") Long id,
-                                                 @RequestPart(value = "file") MultipartFile file,
+                                                 @RequestPart(value = "file", required = false) MultipartFile file,
                                                  @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
         UserDto userDto = userService.updateProfileImage(id, userId, file);

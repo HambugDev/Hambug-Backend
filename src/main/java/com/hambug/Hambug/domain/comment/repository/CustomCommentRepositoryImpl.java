@@ -74,7 +74,9 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
                         comment.content,
                         comment.user.id,
                         comment.user.nickname,
-                        comment.user.profileImageUrl
+                        comment.user.profileImageUrl,
+                        comment.createdAt,
+                        comment.modifiedAt
                 ).from(comment).join(user).on(comment.user.id.eq(user.id))
                 .where(comment.board.id.eq(boardId)).where(predicate)
                 .orderBy(isAsc ? comment.id.asc() : comment.id.desc())

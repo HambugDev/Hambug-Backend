@@ -36,4 +36,15 @@ public class Comment extends Timestamped {
     public void update(String content) {
         this.content = content;
     }
+
+    public Boolean isAuthor(Long userId) {
+        if (userId == null || this.user == null) {
+            return false;
+        }
+        try {
+            return this.user.getId().equals(userId);
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            return false;
+        }
+    }
 }

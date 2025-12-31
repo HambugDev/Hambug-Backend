@@ -20,6 +20,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -33,22 +34,26 @@ public class CommentService {
     private final BoardTrendingService boardTrendingService;
 
     @Transactional(readOnly = true)
-    public CommentResponseDTO.CommentAllResponse findCommentsByBoard(Long boardId, Long lastId, int limit, String order) {
+    public CommentResponseDTO.CommentAllResponse findCommentsByBoard(Long boardId, Long userId, Long lastId, int limit, String order) {
 
         validateBoard(boardId);
 
         Slice<Tuple> slice = commentRepository.findByBoardIdSlice(boardId, lastId, limit, order);
 
         List<CommentResponseDTO.CommentResponse> comments = slice.getContent().stream()
-                .map(tuple -> new CommentResponseDTO.CommentResponse(
-                        tuple.get(0, Long.class),
-                        tuple.get(1, String.class),
-                        tuple.get(2, Long.class),
-                        tuple.get(3, String.class),
-                        tuple.get(4, String.class),
-                        null,
-                        null
-                ))
+                .map(tuple -> {
+                    Long authorId = tuple.get(2, Long.class);
+                    return new CommentResponseDTO.CommentResponse(
+                            tuple.get(0, Long.class),
+                            tuple.get(1, String.class),
+                            authorId,
+                            tuple.get(3, String.class),
+                            tuple.get(4, String.class),
+                            authorId != null && authorId.equals(userId),
+                            tuple.get(5, LocalDateTime.class),
+                            tuple.get(6, LocalDateTime.class)
+                    );
+                })
                 .toList();
 
         Long nextCursorId = comments.isEmpty() ? null : comments.get(comments.size() - 1).id();
@@ -67,7 +72,7 @@ public class CommentService {
         boardTrendingService.addCommentScore(boardId);
         board.incrementCommentCount();
 
-        return new CommentResponseDTO.CommentResponse(comment);
+        return new CommentResponseDTO.CommentResponse(comment, true);
     }
 
     @Transactional
@@ -76,7 +81,7 @@ public class CommentService {
         validateCommentBoard(comment, boardId);
 
         comment.update(request.content());
-        return new CommentResponseDTO.CommentResponse(comment);
+        return new CommentResponseDTO.CommentResponse(comment, true);
     }
 
     @Transactional

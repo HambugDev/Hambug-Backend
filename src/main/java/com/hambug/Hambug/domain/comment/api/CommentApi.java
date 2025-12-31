@@ -17,7 +17,8 @@ public interface CommentApi {
     @Operation(summary = "댓글 목록 조회", description = "게시글 ID로 댓글 목록을 조회합니다.")
     CommonResponse<CommentResponseDTO.CommentAllResponse> getComments(@PathVariable("boardId") Long boardId, @RequestParam(required = false) Long lastId,
                                                                       @RequestParam(defaultValue = "10") int limit,
-                                                                      @RequestParam(defaultValue = "DESC") String order);
+                                                                      @RequestParam(defaultValue = "DESC") String order,
+                                                                      @AuthenticationPrincipal PrincipalDetails principalDetails);
 
     @Operation(summary = "댓글 생성", description = "게시글에 새로운 댓글을 생성합니다.")
     CommonResponse<CommentResponseDTO.CommentResponse> createComment(

@@ -23,13 +23,24 @@ public class CommentController implements CommentApi {
         return principalDetails.getUser().getUserId();
     }
 
+    /**
+     * 댓글 목록 조회
+     *
+     * @param boardId          게시글 ID
+     * @param lastId           마지막 조회 ID
+     * @param limit            조회되는 갯수 Default = 10
+     * @param order            정렬 기본값 = DESC
+     * @param principalDetails 로그인한 사용자 정보
+     */
     @Override
     @GetMapping
     public CommonResponse<CommentResponseDTO.CommentAllResponse> getComments(@PathVariable("boardId") Long boardId,
                                                                              @RequestParam(required = false) Long lastId,
                                                                              @RequestParam(defaultValue = "10") int limit,
-                                                                             @RequestParam(defaultValue = "DESC") String order) {
-        CommentResponseDTO.CommentAllResponse comments = commentService.findCommentsByBoard(boardId, lastId, limit, order.toLowerCase());
+                                                                             @RequestParam(defaultValue = "DESC") String order,
+                                                                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = getUserId(principalDetails);
+        CommentResponseDTO.CommentAllResponse comments = commentService.findCommentsByBoard(boardId, userId, lastId, limit, order.toLowerCase());
         return CommonResponse.ok(comments);
     }
 

@@ -17,6 +17,7 @@ public class CommentResponseDTO {
             Long authorId,
             String authorNickname,
             String authorProfileImageUrl,
+            Boolean isAuthor,
             LocalDateTime createdAt,
             LocalDateTime updatedAt
     ) {
@@ -24,12 +25,50 @@ public class CommentResponseDTO {
             this(
                     comment.getId(),
                     comment.getContent(),
-                    comment.getUser().getId(),
-                    comment.getUser().getNickname(),
-                    comment.getUser().getProfileImageUrl(),
+                    getAuthorIdSafely(comment),
+                    getNicknameSafely(comment),
+                    getProfileImageUrlSafely(comment),
+                    false,
                     comment.getCreatedAt(),
                     comment.getModifiedAt()
             );
+        }
+
+        public CommentResponse(Comment comment, Boolean isAuthor) {
+            this(
+                    comment.getId(),
+                    comment.getContent(),
+                    getAuthorIdSafely(comment),
+                    getNicknameSafely(comment),
+                    getProfileImageUrlSafely(comment),
+                    isAuthor,
+                    comment.getCreatedAt(),
+                    comment.getModifiedAt()
+            );
+        }
+
+        private static String getNicknameSafely(Comment comment) {
+            try {
+                return comment.getUser() != null ? comment.getUser().getNickname() : "알 수 없는 사용자";
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                return "알 수 없는 사용자";
+            }
+        }
+
+        private static String getProfileImageUrlSafely(Comment comment) {
+            try {
+                return comment.getUser() != null ? comment.getUser().getProfileImageUrl() : null;
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                return null;
+            }
+        }
+
+        private static Long getAuthorIdSafely(Comment comment) {
+            try {
+                return comment.getUser() != null ? comment.getUser().getId() : null;
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                return null;
+            }
         }
     }
 }

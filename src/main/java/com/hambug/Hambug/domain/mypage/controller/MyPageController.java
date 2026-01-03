@@ -30,7 +30,8 @@ public class MyPageController implements MyPageApi {
     public CommonResponse<MyPageResponseDto.BoardPage> myBoards(@ModelAttribute MyPageRequestDto.MyBoardRequest query,
                                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
-        return CommonResponse.ok(myPageService.getMyBoards(query, userId));
+        String nickname = principalDetails.getUser().getNickname();
+        return CommonResponse.ok(myPageService.getMyBoards(query, userId, nickname));
     }
 
     @GetMapping("/comments")

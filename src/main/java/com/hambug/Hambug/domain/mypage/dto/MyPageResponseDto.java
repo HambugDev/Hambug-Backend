@@ -30,6 +30,7 @@ public class MyPageResponseDto {
             Long id,
             String title,
             String content,
+            String authorNickname,
             Integer viewCount,
             Integer commentCount,
             Integer likeCount,
@@ -42,12 +43,28 @@ public class MyPageResponseDto {
                     .id(board.getId())
                     .title(board.getTitle())
                     .content(board.getContent())
+                    .authorNickname(board.getUser() != null ? board.getUser().getNickname() : null)
                     .viewCount(board.getViewCount() != null ? board.getViewCount().intValue() : 0)
                     .commentCount(board.getCommentCount() != null ? board.getCommentCount().intValue() : 0)
                     .likeCount(likeCount != null ? likeCount.intValue() : 0)
                     .category(board.getCategory())
                     .imageUrls(board.getImageUrls() != null ? board.getImageUrls() : List.of())
                     .createAt(board.getCreatedAt())
+                    .build();
+        }
+
+        public MyBoardResponse withNickname(String nickname) {
+            return MyBoardResponse.builder()
+                    .id(this.id)
+                    .title(this.title)
+                    .content(this.content)
+                    .authorNickname(nickname)
+                    .viewCount(this.viewCount)
+                    .commentCount(this.commentCount)
+                    .likeCount(this.likeCount)
+                    .category(this.category)
+                    .imageUrls(this.imageUrls)
+                    .createAt(this.createAt)
                     .build();
         }
     }

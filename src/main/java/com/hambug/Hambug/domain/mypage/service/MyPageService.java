@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -18,9 +20,12 @@ public class MyPageService {
     private final CommentService commentService;
 
 
-    public MyPageResponseDto.BoardPage getMyBoards(MyPageRequestDto.MyBoardRequest query, Long userId) {
+    public MyPageResponseDto.BoardPage getMyBoards(MyPageRequestDto.MyBoardRequest query, Long userId, String nickname) {
         Slice<MyPageResponseDto.MyBoardResponse> slice = boardService.getMyBoards(userId, query);
-        return MyPageResponseDto.BoardPage.from(slice.getContent(), slice.hasNext());
+        List<MyPageResponseDto.MyBoardResponse> content = slice.getContent().stream()
+                .map(response -> response.withNickname(nickname))
+                .toList();
+        return MyPageResponseDto.BoardPage.from(content, slice.hasNext());
     }
 
 

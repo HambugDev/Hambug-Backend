@@ -35,6 +35,15 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
                     HttpStatus.UNAUTHORIZED,
                     e
             );
+        } catch (com.hambug.Hambug.global.exception.custom.JwtException e) {
+            log.warn("JWT 예외 발생: {}", e.getMessage());
+            securityResponseHandler.handleSecurityError(
+                    request,
+                    response,
+                    e.getErrorCode(),
+                    HttpStatus.UNAUTHORIZED,
+                    e
+            );
         } catch (JwtException e) {
             log.warn("유효하지 않은 JWT 토큰입니다: {}", e.getMessage());
             securityResponseHandler.handleSecurityError(

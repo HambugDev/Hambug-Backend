@@ -54,10 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String jwtToken = header.substring(BEARER.length());
 
-        if (jwtService.isTokenExpired(jwtToken)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         jwtService.validateToken(jwtToken);
         setAuthenticationContext(jwtToken);
         filterChain.doFilter(request, response);

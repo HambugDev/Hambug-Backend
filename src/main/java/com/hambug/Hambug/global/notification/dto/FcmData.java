@@ -1,4 +1,4 @@
-package com.hambug.Hambug.global.fcm.dto;
+package com.hambug.Hambug.global.notification.dto;
 
 import java.util.Collections;
 import java.util.HashMap;

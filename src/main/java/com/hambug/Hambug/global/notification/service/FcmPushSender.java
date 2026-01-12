@@ -1,7 +1,7 @@
-package com.hambug.Hambug.global.fcm.service;
+package com.hambug.Hambug.global.notification.service;
 
 import com.google.firebase.messaging.*;
-import com.hambug.Hambug.global.fcm.dto.FcmSendRequest;
+import com.hambug.Hambug.global.notification.dto.FcmSendRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

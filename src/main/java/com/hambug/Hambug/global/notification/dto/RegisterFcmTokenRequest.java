@@ -1,4 +1,4 @@
-package com.hambug.Hambug.global.fcm.dto;
+package com.hambug.Hambug.global.notification.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

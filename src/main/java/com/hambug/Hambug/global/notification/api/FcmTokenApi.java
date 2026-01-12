@@ -1,6 +1,6 @@
-package com.hambug.Hambug.global.fcm.api;
+package com.hambug.Hambug.global.notification.api;
 
-import com.hambug.Hambug.global.fcm.dto.RegisterFcmTokenRequest;
+import com.hambug.Hambug.global.notification.dto.RegisterFcmTokenRequest;
 import com.hambug.Hambug.global.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

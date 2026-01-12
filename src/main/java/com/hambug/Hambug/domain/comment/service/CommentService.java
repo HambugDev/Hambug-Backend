@@ -14,7 +14,7 @@ import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.CommentCreatedEvent;
 import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.exception.custom.NotFoundException;
-import com.hambug.Hambug.global.fcm.service.FcmDeviceTokenService;
+import com.hambug.Hambug.global.notification.service.FcmDeviceTokenService;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,7 +88,7 @@ public class CommentService {
         if (boardAuthor.getId().equals(commentAuthor.getId())) {
             return;
         }
-        eventPublisher.publishEvent(new CommentCreatedEvent(boardAuthor.getId(), commentAuthor.getNickname(), commentContent));
+        eventPublisher.publishEvent(new CommentCreatedEvent(board.getId(), boardAuthor.getId(), commentAuthor.getNickname(), commentContent));
     }
 
     @Transactional

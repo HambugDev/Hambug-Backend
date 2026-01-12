@@ -1,4 +1,4 @@
-package com.hambug.Hambug.global.fcm.dto;
+package com.hambug.Hambug.global.notification.dto;
 
 public record FcmSendRequest(
         String token,

@@ -1,8 +1,8 @@
-package com.hambug.Hambug.global.fcm.entity;
+package com.hambug.Hambug.global.notification.entity;
 
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.entity.User;
-import com.hambug.Hambug.global.fcm.dto.RegisterFcmTokenRequest;
+import com.hambug.Hambug.global.notification.dto.RegisterFcmTokenRequest;
 import com.hambug.Hambug.global.timeStamped.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;

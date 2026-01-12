@@ -1,15 +1,15 @@
-package com.hambug.Hambug.global.fcm.service;
+package com.hambug.Hambug.global.notification.service;
 
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.CommentCreatedEvent;
 import com.hambug.Hambug.global.event.UserLogoutFcmEvent;
-import com.hambug.Hambug.global.fcm.dto.FcmData;
-import com.hambug.Hambug.global.fcm.dto.FcmDataType;
-import com.hambug.Hambug.global.fcm.dto.FcmSendRequest;
-import com.hambug.Hambug.global.fcm.dto.RegisterFcmTokenRequest;
-import com.hambug.Hambug.global.fcm.entity.FcmDeviceToken;
-import com.hambug.Hambug.global.fcm.repository.FcmDeviceTokenRepository;
+import com.hambug.Hambug.global.notification.dto.FcmData;
+import com.hambug.Hambug.global.notification.dto.FcmDataType;
+import com.hambug.Hambug.global.notification.dto.FcmSendRequest;
+import com.hambug.Hambug.global.notification.dto.RegisterFcmTokenRequest;
+import com.hambug.Hambug.global.notification.entity.FcmDeviceToken;
+import com.hambug.Hambug.global.notification.repository.FcmDeviceTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -50,7 +50,6 @@ public class FcmDeviceTokenService {
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional
     public void sendCommentPush(CommentCreatedEvent event) {
         fcmRepo.findByUserId(event.boardAuthorId())
                 .ifPresent(token -> {

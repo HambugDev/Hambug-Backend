@@ -1,9 +1,9 @@
-package com.hambug.Hambug.global.fcm.controller;
+package com.hambug.Hambug.global.notification.controller;
 
 import com.hambug.Hambug.domain.oauth.entity.PrincipalDetails;
-import com.hambug.Hambug.global.fcm.api.FcmTokenApi;
-import com.hambug.Hambug.global.fcm.dto.RegisterFcmTokenRequest;
-import com.hambug.Hambug.global.fcm.service.FcmDeviceTokenService;
+import com.hambug.Hambug.global.notification.api.FcmTokenApi;
+import com.hambug.Hambug.global.notification.dto.RegisterFcmTokenRequest;
+import com.hambug.Hambug.global.notification.service.FcmDeviceTokenService;
 import com.hambug.Hambug.global.response.CommonResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -11,11 +11,14 @@ import com.hambug.Hambug.domain.mypage.dto.MyPageRequestDto;
 import com.hambug.Hambug.domain.mypage.dto.MyPageResponseDto;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.service.UserService;
+import com.hambug.Hambug.global.event.CommentCreatedEvent;
 import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.exception.custom.NotFoundException;
+import com.hambug.Hambug.global.fcm.service.FcmDeviceTokenService;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,8 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final UserService userService;
     private final BoardTrendingService boardTrendingService;
+    private final FcmDeviceTokenService fcmDeviceTokenService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public CommentResponseDTO.CommentAllResponse findCommentsByBoard(Long boardId, Long userId, Long lastId, int limit, String order) {
@@ -66,13 +71,24 @@ public class CommentService {
     @Transactional
     public CommentResponseDTO.CommentResponse createComment(Long boardId, Long userId, CommentRequestDTO.CommentCreateRequest request) {
         Board board = findBoard(boardId);
-        Comment comment = new Comment(request.content(), board, User.toEntity(userService.getById(userId)));
+        User user = User.toEntity(userService.getById(userId));
+        Comment comment = new Comment(request.content(), board, user);
         commentRepository.save(comment);
 
+        sendCommentNotification(board, user, request.content());
         boardTrendingService.addCommentScore(boardId);
         board.incrementCommentCount();
 
         return new CommentResponseDTO.CommentResponse(comment, true);
+    }
+
+    private void sendCommentNotification(Board board, User commentAuthor, String commentContent) {
+        User boardAuthor = board.getUser();
+
+        if (boardAuthor.getId().equals(commentAuthor.getId())) {
+            return;
+        }
+        eventPublisher.publishEvent(new CommentCreatedEvent(boardAuthor.getId(), commentAuthor.getNickname(), commentContent));
     }
 
     @Transactional

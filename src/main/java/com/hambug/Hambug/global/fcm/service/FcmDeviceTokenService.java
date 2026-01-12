@@ -2,6 +2,7 @@ package com.hambug.Hambug.global.fcm.service;
 
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
+import com.hambug.Hambug.global.event.CommentCreatedEvent;
 import com.hambug.Hambug.global.event.UserLogoutFcmEvent;
 import com.hambug.Hambug.global.fcm.dto.FcmData;
 import com.hambug.Hambug.global.fcm.dto.FcmDataType;
@@ -15,6 +16,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Service
@@ -43,6 +46,26 @@ public class FcmDeviceTokenService {
     public void deactivate(UserLogoutFcmEvent logoutFcmEvent) {
         fcmRepo.findByUserId(logoutFcmEvent.getUserId())
                 .ifPresent(FcmDeviceToken::deactivate);
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional
+    public void sendCommentPush(CommentCreatedEvent event) {
+        fcmRepo.findByUserId(event.boardAuthorId())
+                .ifPresent(token -> {
+                    try {
+                        FcmSendRequest sendRequest = FcmSendRequest.ofWithData(
+                                token.getToken(),
+                                "새 댓글 알림",
+                                event.commentAuthorName() + "님이 댓글을 남겼습니다: " + event.commentContent(),
+                                FcmData.of(FcmDataType.COMMENT_NOTIFICATION)
+                        );
+                        pushSender.sendPushNotification(sendRequest);
+                    } catch (Exception e) {
+                        log.warn("댓글 푸시 알림 전송 실패: {}", e.getMessage());
+                    }
+                });
     }
 
     private FcmDeviceToken updateIfChanged(FcmDeviceToken existing, RegisterFcmTokenRequest req) {

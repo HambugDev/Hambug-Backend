@@ -31,7 +31,7 @@ public class User extends Timestamped {
     private LoginType loginType;
 
     private String nickname;
-    
+
     private String profileImageUrl;
 
     @Enumerated(EnumType.STRING)
@@ -54,6 +54,7 @@ public class User extends Timestamped {
         return User.builder()
                 .id(userDto.getUserId())
                 .loginType(userDto.getLoginType())
+                .nickname(userDto.getNickname())
                 .role(userDto.getRole())
                 .isActive(userDto.isActive()).build();
     }

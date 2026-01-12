@@ -4,14 +4,18 @@ import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.CommentCreatedEvent;
 import com.hambug.Hambug.global.notification.dto.FcmDataType;
+import com.hambug.Hambug.global.notification.dto.NotificationResponseDTO;
 import com.hambug.Hambug.global.notification.entity.Notification;
 import com.hambug.Hambug.global.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,19 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserService userService;
+
+    @Transactional(readOnly = true)
+    public NotificationResponseDTO.NotificationAllResponse getNotifications(Long userId, Long lastId, int limit) {
+        Slice<Notification> slice = notificationRepository.findByUserIdSlice(userId, lastId, limit);
+
+        List<NotificationResponseDTO.NotificationResponse> content = slice.getContent().stream()
+                .map(NotificationResponseDTO.NotificationResponse::from)
+                .toList();
+
+        Long nextLastId = content.isEmpty() ? null : content.get(content.size() - 1).id();
+
+        return new NotificationResponseDTO.NotificationAllResponse(content, nextLastId, slice.hasNext());
+    }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)

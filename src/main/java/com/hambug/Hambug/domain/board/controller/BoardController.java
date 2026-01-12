@@ -115,7 +115,7 @@ public class BoardController implements BoardApi {
     @GetMapping("/trending")
     @Operation(summary = "인기 게시글 조회", description = "실시간 인기 게시글을 조회합니다. Redis 기반 점수 시스템으로 최근 활발한 게시글이 상위에 노출됩니다.")
     public CommonResponse<List<BoardResponseDTO.BoardResponse>> getTrendingBoards(
-            @RequestParam(defaultValue = "6") int limit) {
+            @RequestParam(defaultValue = "5") int limit) {
         List<BoardResponseDTO.BoardResponse> trendingBoards = boardService.findTrendingBoards(limit);
         return CommonResponse.ok(trendingBoards);
     }

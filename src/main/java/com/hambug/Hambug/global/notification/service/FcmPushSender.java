@@ -14,6 +14,7 @@ public class FcmPushSender {
         String title = (req.title() == null || req.title().isBlank()) ? "알림" : req.title();
         String body = (req.body() == null) ? "" : req.body();
         String clickAction = (req.clickAction() == null || req.clickAction().isBlank()) ? "push_click" : req.clickAction();
+        log.info("fcm 리퀘스트 : {}", req);
 
         Notification.Builder notificationBuilder = Notification.builder()
                 .setTitle(title)

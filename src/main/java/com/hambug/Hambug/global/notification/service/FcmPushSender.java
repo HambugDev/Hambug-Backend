@@ -69,7 +69,7 @@ public class FcmPushSender {
         try {
             return FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException exception) {
-            log.error("Fcm 메시지 전송 실패 : {}", exception.getMessage());
+            log.error("Fcm 메시지 전송 실패: {}", exception.getMessage(), exception);
             throw new RuntimeException(exception);
         }
     }

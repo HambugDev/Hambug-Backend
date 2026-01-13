@@ -3,6 +3,7 @@ package com.hambug.Hambug.global.notification.service;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.CommentCreatedEvent;
+import com.hambug.Hambug.global.event.LikeCreatedEvent;
 import com.hambug.Hambug.global.event.UserLogoutFcmEvent;
 import com.hambug.Hambug.global.notification.dto.FcmData;
 import com.hambug.Hambug.global.notification.dto.FcmDataType;
@@ -67,6 +68,25 @@ public class FcmDeviceTokenService {
                 });
     }
 
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void sendLikePush(LikeCreatedEvent event) {
+        fcmRepo.findByUserId(event.boardAuthorId())
+                .ifPresent(token -> {
+                    try {
+                        FcmSendRequest sendRequest = FcmSendRequest.ofWithData(
+                                token.getToken(),
+                                event.likeAuthorNickname(),
+                                "회원님의 게시물을 좋아합니다",
+                                FcmData.of(FcmDataType.LIKE_NOTIFICATION)
+                        );
+                        pushSender.sendPushNotification(sendRequest);
+                    } catch (Exception e) {
+                        log.warn("좋아요 푸시 알림 전송 실패: {}", e.getMessage());
+                    }
+                });
+    }
+    
     private FcmDeviceToken updateIfChanged(FcmDeviceToken existing, RegisterFcmTokenRequest req) {
         if (!existing.isSameAs(req.token(), req.platform())) {
             existing.applyRegistration(req);

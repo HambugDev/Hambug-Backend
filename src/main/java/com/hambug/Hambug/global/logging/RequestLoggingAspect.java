@@ -113,7 +113,7 @@ public class RequestLoggingAspect {
                 try {
                     Long userId = pd.getUserDto() != null ? pd.getUserDto().getUserId() : null;
                     String nickname = pd.getUserDto() != null ? pd.getUserDto().getNickname() : null;
-                    return "userId=" + (userId != null ? userId : "?") + ", nick=" + (nickname != null ? nickname : "?");
+                    return "likeUserId=" + (userId != null ? userId : "?") + ", nick=" + (nickname != null ? nickname : "?");
                 } catch (Exception ignored) {
                 }
             }

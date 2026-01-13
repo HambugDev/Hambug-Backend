@@ -3,6 +3,7 @@ package com.hambug.Hambug.global.notification.service;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.CommentCreatedEvent;
+import com.hambug.Hambug.global.event.LikeCreatedEvent;
 import com.hambug.Hambug.global.notification.dto.FcmDataType;
 import com.hambug.Hambug.global.notification.dto.NotificationResponseDTO;
 import com.hambug.Hambug.global.notification.entity.Notification;
@@ -50,6 +51,21 @@ public class NotificationService {
                 .targetId(event.boardId())
                 .build();
 
+        notificationRepository.save(notification);
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void saveLikeNotification(LikeCreatedEvent event) {
+        User receiver = User.toEntity(userService.getById(event.likeUserId()));
+
+        Notification notification = Notification.builder()
+                .receiver(receiver)
+                .title(event.likeAuthorNickname())
+                .content("회원님의 게시물을 좋아합니다")
+                .type(FcmDataType.LIKE_NOTIFICATION)
+                .targetId(event.boardId())
+                .build();
         notificationRepository.save(notification);
     }
 

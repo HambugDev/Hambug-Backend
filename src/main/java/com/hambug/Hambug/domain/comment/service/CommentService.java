@@ -14,7 +14,6 @@ import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.CommentCreatedEvent;
 import com.hambug.Hambug.global.exception.ErrorCode;
 import com.hambug.Hambug.global.exception.custom.NotFoundException;
-import com.hambug.Hambug.global.notification.service.FcmDeviceTokenService;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,6 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final UserService userService;
     private final BoardTrendingService boardTrendingService;
-    private final FcmDeviceTokenService fcmDeviceTokenService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)

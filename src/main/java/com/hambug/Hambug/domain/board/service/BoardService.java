@@ -88,7 +88,7 @@ public class BoardService {
 
     @Transactional
     public BoardResponseDTO.BoardResponse createBoard(BoardRequestDTO.BoardCreateRequest request, Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeleteIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Board board = Board.builder()
@@ -106,7 +106,7 @@ public class BoardService {
     @Transactional
     public BoardResponseDTO.BoardResponse createBoardWithImages(BoardRequestDTO.BoardCreateRequest request,
                                                                 List<MultipartFile> images, Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeleteIsNull(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         List<String> imageUrls = new ArrayList<>();

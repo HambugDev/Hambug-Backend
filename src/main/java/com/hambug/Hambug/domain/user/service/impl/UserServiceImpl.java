@@ -79,14 +79,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void softDeleteUser(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeleteIsNull(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
         user.setActive(false);
         user.markDeleted();
     }
 
     private User getUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
+        return userRepository.findByIdAndDeleteIsNull(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을수 없습니다."));
     }
 
     private void validOwner(Long userId, Long authUserId) {

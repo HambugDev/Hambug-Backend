@@ -32,7 +32,7 @@ public class BoardLikeService {
 
     @Transactional
     public LikeResponseDTO toggleLike(Long boardId, Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeleteIsNull(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         Board board = boardRepository.findById(boardId)
@@ -57,17 +57,16 @@ public class BoardLikeService {
             isLiked = true;
 
             // 탈퇴한 사용자가 존재하지 없을때만 전송하기
-            userRepository.findById(board.getUser().getId())
+            userRepository.findByIdAndDeleteIsNull(board.getUser().getId())
                     .ifPresent(u -> {
-                        if (u.getDeletedAt() == null) {
-                            String redisKey = "like_notification:" + boardId + ":" + userId;
-                            Boolean hasAlreadySent = redisTemplate.hasKey(redisKey);
+                        String redisKey = "like_notification:" + boardId + ":" + userId;
+                        Boolean hasAlreadySent = redisTemplate.hasKey(redisKey);
 
-                            if (Boolean.FALSE.equals(hasAlreadySent)) {
-                                eventPublisher.publishEvent(new LikeCreatedEvent(u.getId(), user.getId(), boardId, user.getNickname()));
-                                redisTemplate.opsForValue().set(redisKey, "sent", Duration.ofMinutes(1));
-                            }
+                        if (Boolean.FALSE.equals(hasAlreadySent)) {
+                            eventPublisher.publishEvent(new LikeCreatedEvent(u.getId(), user.getId(), boardId, user.getNickname()));
+                            redisTemplate.opsForValue().set(redisKey, "sent", Duration.ofMinutes(1));
                         }
+
                     });
 
             boardTrendingService.addLikeScore(boardId);
@@ -89,7 +88,7 @@ public class BoardLikeService {
      * 특정 사용자가 특정 게시글에 좋아요를 눌렀는지 확인
      */
     public boolean isLikedByUser(Long boardId, Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeleteIsNull(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         Board board = boardRepository.findById(boardId)

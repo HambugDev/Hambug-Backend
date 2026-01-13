@@ -15,7 +15,6 @@ public class OAuthService {
     private final OAuth2AuthorizedClientService clientService;
 
     public String getAccessToken(Authentication authentication, String registrationId) {
-        log.info("테스트 합니다. {} , {}", authentication.getName(), registrationId);
         OAuth2AuthorizedClient oauthClient = clientService.loadAuthorizedClient(registrationId, authentication.getName());
         if (oauthClient != null && oauthClient.getAccessToken() != null) {
             return oauthClient.getAccessToken().getTokenValue();

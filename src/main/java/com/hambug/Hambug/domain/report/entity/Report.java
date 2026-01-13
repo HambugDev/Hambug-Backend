@@ -25,12 +25,16 @@ public class Report extends Timestamped {
     private TargetType targetType;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private String reason;
 
-    public Report(Long userId, Long targetId, TargetType targetType, String reason) {
+    public Report(Long userId, Long targetId, TargetType targetType, String title, String reason) {
         this.userId = userId;
         this.targetId = targetId;
         this.targetType = targetType;
+        this.title = title;
         this.reason = reason;
     }
 }

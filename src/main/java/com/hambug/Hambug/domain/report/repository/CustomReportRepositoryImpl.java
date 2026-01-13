@@ -95,7 +95,7 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
         }
 
         List<Tuple> results = factory
-                .select(r.id, r.userId, u.nickname, r.reason, r.createdAt)
+                .select(r.id, r.userId, u.nickname, r.title, r.reason, r.createdAt)
                 .from(r)
                 .join(u).on(r.userId.eq(u.id))
                 .where(where)
@@ -111,6 +111,7 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
                         t.get(r.id),
                         t.get(r.userId),
                         t.get(u.nickname),
+                        t.get(r.title),
                         t.get(r.reason),
                         t.get(r.createdAt)
                 ))

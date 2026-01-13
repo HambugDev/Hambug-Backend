@@ -31,6 +31,7 @@ public class AdminReportResponseDto {
             Long id,
             Long authorId,
             String nickname,
+            String title,
             String reason,
             LocalDateTime createdAt
     ) {

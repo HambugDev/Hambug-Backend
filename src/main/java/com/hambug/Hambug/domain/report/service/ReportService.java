@@ -31,6 +31,7 @@ public class ReportService {
                 userId,
                 request.targetId(),
                 request.targetType(),
+                request.title(),
                 request.reason()
         );
 

@@ -8,12 +8,14 @@ import com.hambug.Hambug.domain.like.entity.BoardLike;
 import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
-import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.LikeCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class BoardLikeService {
     private final UserRepository userRepository;
     private final BoardTrendingService boardTrendingService;
     private final ApplicationEventPublisher eventPublisher;
-    private final UserService userService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
 
     @Transactional
@@ -57,8 +59,15 @@ public class BoardLikeService {
             // 탈퇴한 사용자가 존재하지 없을때만 전송하기
             userRepository.findById(board.getUser().getId())
                     .ifPresent(u -> {
-                        if (u.getDeletedAt() == null)
-                            eventPublisher.publishEvent(new LikeCreatedEvent(u.getId(), user.getId(), boardId, user.getNickname()));
+                        if (u.getDeletedAt() == null) {
+                            String redisKey = "like_notification:" + boardId + ":" + userId;
+                            Boolean hasAlreadySent = redisTemplate.hasKey(redisKey);
+
+                            if (Boolean.FALSE.equals(hasAlreadySent)) {
+                                eventPublisher.publishEvent(new LikeCreatedEvent(u.getId(), user.getId(), boardId, user.getNickname()));
+                                redisTemplate.opsForValue().set(redisKey, "sent", Duration.ofMinutes(1));
+                            }
+                        }
                     });
 
             boardTrendingService.addLikeScore(boardId);

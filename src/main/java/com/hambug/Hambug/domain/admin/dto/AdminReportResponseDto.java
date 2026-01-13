@@ -10,10 +10,10 @@ public class AdminReportResponseDto {
     public record GroupedReport(Long targetId, TargetType targetType, Long latestReportId, Long reportCount) {
     }
 
-    public record Page(Boolean nextPage, Long netCursorId, List<GroupedReport> content) {
+    public record Page(Boolean nextPage, Long nextCursorId, List<GroupedReport> content) {
     }
 
-    public record DetailPage(Boolean nextPage, Long netCursorId, List<ReportDetail> content) {
+    public record DetailPage(Boolean nextPage, Long nextCursorId, List<ReportDetail> content) {
     }
 
     public record DetailReport(Long id, String title, String content, String authorNickname, Long authorId) {

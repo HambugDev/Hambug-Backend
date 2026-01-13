@@ -7,7 +7,7 @@ import java.util.List;
 
 public class CommentResponseDTO {
 
-    public record CommentAllResponse(List<CommentResponse> content, Long netCursorId,
+    public record CommentAllResponse(List<CommentResponse> content, Long nextCursorId,
                                      Boolean nextPage) {
     }
 

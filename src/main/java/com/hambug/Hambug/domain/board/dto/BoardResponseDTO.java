@@ -11,7 +11,7 @@ public class BoardResponseDTO {
 
     public record BoardAllResponse(
             List<BoardResponse> content,
-            Long netCursorId,
+            Long nextCursorId,
             Boolean nextPage
     ) {
     }

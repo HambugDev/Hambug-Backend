@@ -51,7 +51,7 @@ public class CommentResponseDTO {
             try {
                 return comment.getUser() != null ? comment.getUser().getNickname() : "알 수 없는 사용자";
             } catch (jakarta.persistence.EntityNotFoundException e) {
-                return "알 수 없는 사용자";
+                return "탈퇴한 사용자";
             }
         }
 

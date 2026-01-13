@@ -72,7 +72,7 @@ public class BoardResponseDTO {
             try {
                 return board.getUser() != null ? board.getUser().getNickname() : "알 수 없는 사용자";
             } catch (jakarta.persistence.EntityNotFoundException e) {
-                return "알 수 없는 사용자";
+                return "탈퇴한 사용자";
             }
         }
 
@@ -126,7 +126,7 @@ public class BoardResponseDTO {
             try {
                 return board.getUser() != null ? board.getUser().getNickname() : "알 수 없는 사용자";
             } catch (jakarta.persistence.EntityNotFoundException e) {
-                return "알 수 없는 사용자";
+                return "탈퇴한 사용자";
             }
         }
 

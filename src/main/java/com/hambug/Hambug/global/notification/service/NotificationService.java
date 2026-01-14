@@ -1,5 +1,6 @@
 package com.hambug.Hambug.global.notification.service;
 
+import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.CommentCreatedEvent;
@@ -16,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserService userService;
+    private final BoardLikeRepository boardLikeRepository;
 
     @Transactional(readOnly = true)
     public NotificationResponseDTO.NotificationAllResponse getNotifications(Long userId, Long lastId, int limit) {
@@ -57,16 +61,37 @@ public class NotificationService {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveLikeNotification(LikeCreatedEvent event) {
-        User receiver = User.toEntity(userService.getById(event.likeUserId()));
+        User receiver = User.toEntity(userService.getById(event.boardAuthorId()));
 
-        Notification notification = Notification.builder()
-                .receiver(receiver)
-                .title(event.likeAuthorNickname())
-                .content("회원님의 게시물을 좋아합니다")
-                .type(FcmDataType.LIKE_NOTIFICATION)
-                .targetId(event.boardId())
-                .build();
-        notificationRepository.save(notification);
+        // 1시간 이내의 동일한 게시글에 대한 좋아요 알림이 있는지 확인
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        Optional<Notification> existingNotification = notificationRepository.findFirstByReceiverAndTargetIdAndTypeAndCreatedAtAfterOrderByCreatedAtDesc(
+                receiver, event.boardId(), FcmDataType.LIKE_NOTIFICATION, oneHourAgo
+        );
+
+        long likeCount = boardLikeRepository.countByBoardId(event.boardId());
+        String title = event.likeAuthorNickname();
+        String content = "회원님의 게시물을 좋아합니다";
+
+        if (likeCount > 1) {
+            title = event.likeAuthorNickname() + "님 외 " + (likeCount - 1) + "명";
+            content = "회원님의 게시물을 좋아합니다";
+        }
+
+        if (existingNotification.isPresent()) {
+            Notification notification = existingNotification.get();
+            notification.updateContent(title, content);
+            notificationRepository.save(notification);
+        } else {
+            Notification notification = Notification.builder()
+                    .receiver(receiver)
+                    .title(title)
+                    .content(content)
+                    .type(FcmDataType.LIKE_NOTIFICATION)
+                    .targetId(event.boardId())
+                    .build();
+            notificationRepository.save(notification);
+        }
     }
 
 }

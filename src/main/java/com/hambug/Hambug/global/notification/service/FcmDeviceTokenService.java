@@ -1,5 +1,6 @@
 package com.hambug.Hambug.global.notification.service;
 
+import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
 import com.hambug.Hambug.domain.user.dto.UserDto;
 import com.hambug.Hambug.domain.user.service.UserService;
 import com.hambug.Hambug.global.event.CommentCreatedEvent;
@@ -28,6 +29,7 @@ public class FcmDeviceTokenService {
     private final FcmDeviceTokenRepository fcmRepo;
     private final UserService userService;
     private final FcmPushSender pushSender;
+    private final BoardLikeRepository boardLikeRepository;
 
     @Transactional
     public void registerOrUpdate(Long userId, RegisterFcmTokenRequest req) {
@@ -59,7 +61,7 @@ public class FcmDeviceTokenService {
                                 token.getToken(),
                                 "새 댓글 알림",
                                 event.commentAuthorName() + "님이 댓글을 남겼습니다: " + event.commentContent(),
-                                FcmData.of(FcmDataType.COMMENT_NOTIFICATION)
+                                FcmData.of(FcmDataType.COMMENT_NOTIFICATION, event.boardId())
                         );
                         pushSender.sendPushNotification(sendRequest);
                     } catch (Exception e) {
@@ -74,11 +76,17 @@ public class FcmDeviceTokenService {
         fcmRepo.findByUserId(event.boardAuthorId())
                 .ifPresent(token -> {
                     try {
+                        long likeCount = boardLikeRepository.countByBoardId(event.boardId());
+                        String title = event.likeAuthorNickname();
+                        if (likeCount > 1) {
+                            title = event.likeAuthorNickname() + "님 외 " + (likeCount - 1) + "명";
+                        }
+
                         FcmSendRequest sendRequest = FcmSendRequest.ofWithData(
                                 token.getToken(),
-                                event.likeAuthorNickname(),
+                                title,
                                 "회원님의 게시물을 좋아합니다",
-                                FcmData.of(FcmDataType.LIKE_NOTIFICATION)
+                                FcmData.of(FcmDataType.LIKE_NOTIFICATION, event.boardId())
                         );
                         pushSender.sendPushNotification(sendRequest);
                     } catch (Exception e) {
@@ -86,7 +94,7 @@ public class FcmDeviceTokenService {
                     }
                 });
     }
-    
+
     private FcmDeviceToken updateIfChanged(FcmDeviceToken existing, RegisterFcmTokenRequest req) {
         if (!existing.isSameAs(req.token(), req.platform())) {
             existing.applyRegistration(req);

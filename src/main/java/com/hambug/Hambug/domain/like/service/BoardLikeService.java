@@ -63,7 +63,7 @@ public class BoardLikeService {
                         Boolean hasAlreadySent = redisTemplate.hasKey(redisKey);
 
                         if (Boolean.FALSE.equals(hasAlreadySent)) {
-                            eventPublisher.publishEvent(new LikeCreatedEvent(u.getId(), user.getId(), boardId, user.getNickname()));
+                            eventPublisher.publishEvent(new LikeCreatedEvent(board.getUser().getId(), user.getId(), boardId, user.getNickname()));
                             redisTemplate.opsForValue().set(redisKey, "sent", Duration.ofMinutes(1));
                         }
 

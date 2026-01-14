@@ -17,6 +17,12 @@ public record FcmData(
     public static FcmData of(FcmDataType type) {
         return new FcmData(type, Collections.emptyMap());
     }
+    
+    public static FcmData of(FcmDataType type, Long boardId) {
+        Map<String, String> attrs = new HashMap<>();
+        attrs.put("boardId", String.valueOf(boardId));
+        return new FcmData(type, attrs);
+    }
 
     public static FcmData of(FcmDataType type, Map<String, String> attributes) {
         return new FcmData(type, attributes);

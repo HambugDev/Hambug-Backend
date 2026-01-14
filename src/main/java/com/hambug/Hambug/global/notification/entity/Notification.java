@@ -47,6 +47,12 @@ public class Notification extends Timestamped {
         this.targetId = targetId;
     }
 
+    public void updateContent(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.isRead = false; // 새로운 정보가 업데이트되었으므로 읽지 않음 처리
+    }
+
     public void markAsRead() {
         this.isRead = true;
     }

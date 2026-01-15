@@ -33,7 +33,15 @@ public interface BoardLikeRepository extends JpaRepository<BoardLike, Long> {
     long countByBoardId(@Param("boardId") Long boardId);
 
     /**
+     * 특정 게시글에서 가장 최근에 좋아요를 누른 데이터 가져오기
+     */
+    Optional<BoardLike> findFirstByBoardIdOrderByCreatedAtDesc(Long boardId);
+
+    
+    /**
      * 특정 게시글에 대한 모든 좋아요 삭제 (게시글 삭제 시 사용)
      */
     void deleteAllByBoard(Board board);
+
+
 }

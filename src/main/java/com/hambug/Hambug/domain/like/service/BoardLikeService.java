@@ -9,7 +9,9 @@ import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.repository.UserRepository;
 import com.hambug.Hambug.global.event.LikeCreatedEvent;
+import com.hambug.Hambug.global.event.LikeDeletedEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -40,12 +43,18 @@ public class BoardLikeService {
         ;
         boolean isLiked;
 
+        String redisKey = "like_notification:" + boardId + ":" + userId;
         // 이미 좋아요를 눌렀는지 확인
         if (boardLikeRepository.existsByUserAndBoard(user, board)) {
             // 좋아요 취소
             BoardLike boardLike = boardLikeRepository.findByUserAndBoard(user, board)
                     .orElseThrow(() -> new IllegalStateException("좋아요 정보를 찾을 수 없습니다."));
             boardLikeRepository.delete(boardLike);
+            Boolean hasKey = redisTemplate.hasKey(redisKey);
+            if (hasKey) {
+                redisTemplate.delete(redisKey);
+            }
+            eventPublisher.publishEvent(new LikeDeletedEvent(board.getUser().getId(), boardId));
             isLiked = false;
         } else {
             // 좋아요 추가
@@ -59,10 +68,12 @@ public class BoardLikeService {
             // 탈퇴한 사용자가 존재하지 없을때만 전송하기
             userRepository.findByIdAndDeleteIsNull(board.getUser().getId())
                     .ifPresent(u -> {
-                        String redisKey = "like_notification:" + boardId + ":" + userId;
+
                         Boolean hasAlreadySent = redisTemplate.hasKey(redisKey);
 
-                        if (Boolean.FALSE.equals(hasAlreadySent)) {
+                        log.info("값은 : {}", hasAlreadySent);
+                        log.info("결과는 : {} ,{} {}", board.getUser().getId().equals(u.getId()), board.getUser().getId(), userId);
+                        if (!hasAlreadySent && !board.getUser().getId().equals(userId)) {
                             eventPublisher.publishEvent(new LikeCreatedEvent(board.getUser().getId(), user.getId(), boardId, user.getNickname()));
                             redisTemplate.opsForValue().set(redisKey, "sent", Duration.ofMinutes(1));
                         }

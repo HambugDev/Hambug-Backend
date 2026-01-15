@@ -35,16 +35,20 @@ public class Notification extends Timestamped {
     @Column(nullable = false)
     private Long targetId; // 클릭 시 이동할 게시글 ID 등
 
+    @Column
+    private String thumbnailUrl; // 게시글 이미지 URL (있을 경우)
+
     @Column(nullable = false)
     private boolean isRead = false; // 읽음 여부
 
     @Builder
-    public Notification(User receiver, String title, String content, FcmDataType type, Long targetId) {
+    public Notification(User receiver, String title, String content, FcmDataType type, Long targetId, String thumbnailUrl) {
         this.receiver = receiver;
         this.title = title;
         this.content = content;
         this.type = type;
         this.targetId = targetId;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public void updateContent(String title, String content) {

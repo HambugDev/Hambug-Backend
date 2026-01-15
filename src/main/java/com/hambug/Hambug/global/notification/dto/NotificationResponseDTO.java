@@ -20,6 +20,7 @@ public class NotificationResponseDTO {
             String content,
             FcmDataType type,
             Long targetId,
+            String thumbnailUrl,
             boolean isRead,
             LocalDateTime createdAt
     ) {
@@ -30,6 +31,7 @@ public class NotificationResponseDTO {
                     notification.getContent(),
                     notification.getType(),
                     notification.getTargetId(),
+                    notification.getThumbnailUrl(),
                     notification.isRead(),
                     notification.getCreatedAt()
             );

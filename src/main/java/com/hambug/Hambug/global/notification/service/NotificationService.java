@@ -1,5 +1,6 @@
 package com.hambug.Hambug.global.notification.service;
 
+import com.hambug.Hambug.domain.board.repository.BoardRepository;
 import com.hambug.Hambug.domain.like.repository.BoardLikeRepository;
 import com.hambug.Hambug.domain.user.entity.User;
 import com.hambug.Hambug.domain.user.service.UserService;
@@ -28,6 +29,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserService userService;
     private final BoardLikeRepository boardLikeRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional(readOnly = true)
     public NotificationResponseDTO.NotificationAllResponse getNotifications(Long userId, Long lastId, int limit) {
@@ -46,6 +48,9 @@ public class NotificationService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveCommentNotification(CommentCreatedEvent event) {
         User receiver = User.toEntity(userService.getById(event.boardAuthorId()));
+        String thumbnailUrl = boardRepository.findById(event.boardId())
+                .map(board -> board.getImageUrls().isEmpty() ? null : board.getImageUrls().get(0))
+                .orElse(null);
 
         Notification notification = Notification.builder()
                 .receiver(receiver)
@@ -53,6 +58,7 @@ public class NotificationService {
                 .content(event.commentAuthorName() + "님이 댓글을 남겼습니다: " + event.commentContent())
                 .type(FcmDataType.COMMENT_NOTIFICATION)
                 .targetId(event.boardId())
+                .thumbnailUrl(thumbnailUrl)
                 .build();
 
         notificationRepository.save(notification);
@@ -78,6 +84,10 @@ public class NotificationService {
             content = "회원님의 게시물을 좋아합니다";
         }
 
+        String thumbnailUrl = boardRepository.findById(event.boardId())
+                .map(board -> board.getImageUrls().isEmpty() ? null : board.getImageUrls().get(0))
+                .orElse(null);
+
         if (existingNotification.isPresent()) {
             Notification notification = existingNotification.get();
             notification.updateContent(title, content);
@@ -89,6 +99,7 @@ public class NotificationService {
                     .content(content)
                     .type(FcmDataType.LIKE_NOTIFICATION)
                     .targetId(event.boardId())
+                    .thumbnailUrl(thumbnailUrl)
                     .build();
             notificationRepository.save(notification);
         }

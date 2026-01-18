@@ -40,9 +40,10 @@ public class NotificationService {
                 .map(NotificationResponseDTO.NotificationResponse::from)
                 .toList();
 
-        Long nextLastId = content.isEmpty() ? null : content.get(content.size() - 1).id();
+        Long nextCursorId = content.isEmpty() ? null : content.get(content.size() - 1).id();
+        boolean nextPage = slice.hasNext();
 
-        return new NotificationResponseDTO.NotificationAllResponse(content, nextLastId, slice.hasNext());
+        return new NotificationResponseDTO.NotificationAllResponse(content, nextCursorId, nextPage);
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)

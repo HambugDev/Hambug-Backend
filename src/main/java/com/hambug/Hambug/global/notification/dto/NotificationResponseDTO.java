@@ -9,8 +9,8 @@ public class NotificationResponseDTO {
 
     public record NotificationAllResponse(
             List<NotificationResponse> content,
-            Long lastId,
-            Boolean hasNext
+            Long nextCursorId,
+            Boolean nextPage
     ) {
     }
 

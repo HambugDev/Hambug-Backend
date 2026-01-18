@@ -4,15 +4,13 @@ public record FcmSendRequest(
         String token,
         String title,
         String body,
-        String clickAction,
-        String imageUrl,
         FcmData data
 ) {
     public static FcmSendRequest ofBasic(String token, String title, String body) {
-        return new FcmSendRequest(token, title, body, "push_click", null, null);
+        return new FcmSendRequest(token, title, body, null);
     }
 
     public static FcmSendRequest ofWithData(String token, String title, String body, FcmData data) {
-        return new FcmSendRequest(token, title, body, "push_click", null, data);
+        return new FcmSendRequest(token, title, body, data);
     }
 }

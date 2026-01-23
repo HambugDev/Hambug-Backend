@@ -160,8 +160,12 @@ public class BoardService {
         }
 
         List<String> imageUrls = new ArrayList<>();
+        if (request.imageUrls() != null) {
+            imageUrls.addAll(request.imageUrls());
+        }
+
         if (images != null && !images.isEmpty()) {
-            if (images.size() > 5) {
+            if (imageUrls.size() + images.size() > 5) {
                 throw new IllegalArgumentException("이미지는 최대 5장까지 업로드 가능합니다.");
             }
             for (MultipartFile image : images) {

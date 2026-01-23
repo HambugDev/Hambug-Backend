@@ -93,7 +93,9 @@ public class BoardController implements BoardApi {
     }
 
     @Override
-    @PutMapping("/{id}/with-images")
+    @PutMapping(
+            value = "/{id}/with-images",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResponse<BoardResponseDTO.BoardResponse> updateBoardWithImages(
             @PathVariable("id") Long id,
             @RequestPart("request") BoardRequestDTO.BoardUpdateRequest request,

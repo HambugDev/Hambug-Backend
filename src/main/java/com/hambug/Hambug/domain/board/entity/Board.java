@@ -74,11 +74,28 @@ public class Board extends Timestamped {
     }
 
     public void setImagesFromUrls(List<String> imageUrls) {
-        this.images.clear();
-        if (imageUrls == null) return;
-        for (String url : imageUrls) {
-            BoardImage image = new BoardImage(new BoardImageId(null, url), this);
-            this.images.add(image);
+        if (imageUrls == null) {
+            this.images.clear();
+            return;
+        }
+
+        // 현재 유지해야 할 URL 목록
+        List<String> newUrls = new ArrayList<>(imageUrls);
+
+        // 삭제해야 할 이미지들 제거
+        this.images.removeIf(image -> !newUrls.contains(image.getImageUrl()));
+
+        // 이미 존재하는 URL 목록
+        List<String> existingUrls = this.images.stream()
+                .map(BoardImage::getImageUrl)
+                .toList();
+
+        // 새로 추가해야 할 URL들만 BoardImage 객체로 생성하여 추가
+        for (String url : newUrls) {
+            if (!existingUrls.contains(url)) {
+                BoardImage image = new BoardImage(new BoardImageId(this.id, url), this);
+                this.images.add(image);
+            }
         }
     }
 

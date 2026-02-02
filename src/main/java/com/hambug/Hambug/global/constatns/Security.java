@@ -32,7 +32,9 @@ public class Security {
             "/login",
             "/login/oauth2/code/**",
             "/admin/api/v1/auth/send-email",
-            "/admin/api/v1/auth/verification-email"
+            "/admin/api/v1/auth/verification-email",
+            "/api/v1/auth/apple/android/callback"
+
     );
 
     public static final List<String> ONLY_SUPER_ADMIN_URLS = List.of(

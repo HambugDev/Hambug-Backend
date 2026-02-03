@@ -22,7 +22,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController implements AuthApi {
 
@@ -30,7 +29,7 @@ public class AuthController implements AuthApi {
     private final JwtService jwtService;
     private final Oauth2ServiceFactory oauth2ServiceFactory;
 
-    @PostMapping("/refresh")
+    @PostMapping("/api/v1/auth/refresh")
     public CommonResponse<String> refreshToken(
             @RequestHeader(value = "Authorization", required = false) String authorization
     ) {
@@ -42,27 +41,27 @@ public class AuthController implements AuthApi {
         return CommonResponse.ok(reissueTokensFromRefresh);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/api/v1/auth/logout")
     public CommonResponse<Boolean> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = getUserId(principalDetails);
         jwtService.logout(userId);
         return CommonResponse.ok(true);
     }
 
-    @GetMapping("/me")
+    @GetMapping("/api/v1/auth/me")
     public CommonResponse<UserDto> me(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         UserDto user = principalDetails.getUser();
         return CommonResponse.ok(user);
     }
 
-    @PostMapping("/unlink/{provider}")
+    @PostMapping("/api/v1/auth/unlink/{provider}")
     public CommonResponse<Boolean> unlink(@PathVariable String provider,
                                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
         oauth2ServiceFactory.getService(provider).unlink(principalDetails.getUser().getUserId());
         return CommonResponse.ok(true);
     }
 
-    @PostMapping("/login/{provider}")
+    @PostMapping("/api/v1/auth/login/{provider}")
     public CommonResponse<AuthResponseDto.LoginResponse> login(@PathVariable String provider,
                                                                @RequestBody @Valid Oauth2RequestDTO.LoginAuthCode payload) {
         oauth2ServiceFactory.validateProvider(provider, payload.accessToken());
@@ -84,7 +83,7 @@ public class AuthController implements AuthApi {
         return CommonResponse.ok(new AuthResponseDto.LoginResponse(userDto, userDto.toJwtTokenDto()));
     }
 
-    @GetMapping("/apple/android/callback")
+    @GetMapping("/api/auth/apple/android/callback")
     public String appleAndroidCallback() {
         return "로그인 처리 중입니다";
     }

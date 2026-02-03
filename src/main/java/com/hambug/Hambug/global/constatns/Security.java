@@ -33,7 +33,7 @@ public class Security {
             "/login/oauth2/code/**",
             "/admin/api/v1/auth/send-email",
             "/admin/api/v1/auth/verification-email",
-            "/api/v1/auth/apple/android/callback"
+            "/api/auth/apple/android/callback"
 
     );
 

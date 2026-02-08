@@ -7,18 +7,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class AuthHtmlController {
 
-        @GetMapping(
-                value = "/api/auth/apple/android/callback",
-                produces = "text/html; charset=UTF-8"
-        )
-        @ResponseBody
-        public String appleAndroidCallback() {
-            return """
+    @GetMapping(value = "/api/auth/apple/android/callback", produces = "text/html")
+    @ResponseBody
+    public String appleCallback() {
+        return """
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="UTF-8">
-                <title>로그인 처리 중입니다</title>
             </head>
             <body>
                 <script>
@@ -28,5 +24,5 @@ public class AuthHtmlController {
             </body>
             </html>
             """;
-        }
+    }
 }

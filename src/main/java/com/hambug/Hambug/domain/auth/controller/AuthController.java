@@ -83,11 +83,6 @@ public class AuthController implements AuthApi {
         return CommonResponse.ok(new AuthResponseDto.LoginResponse(userDto, userDto.toJwtTokenDto()));
     }
 
-    @GetMapping("/api/auth/apple/android/callback")
-    public String appleAndroidCallback() {
-        return "로그인 처리 중입니다";
-    }
-
     private Long getUserId(PrincipalDetails principalDetails) {
         return principalDetails.getUser().getUserId();
     }

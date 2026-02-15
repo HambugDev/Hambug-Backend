@@ -104,6 +104,7 @@ public class CommentService {
         Comment comment = findComment(commentId);
         validateCommentBoard(comment, boardId);
         comment.getBoard().decrementCommentCount();
+        boardTrendingService.removeCommentScore(boardId);
         commentRepository.delete(comment);
     }
 

@@ -33,7 +33,7 @@ public class BoardTrendingService {
     private static final int DAILY_KEY_TTL_DAYS = 40; // 일자 키 TTL(버퍼 포함)
     private static final int ROLLING_TTL_SECONDS = 60; // 롤링 합산 캐시 TTL
 
-    private static final double MIN_SCORE = 5.0; // 최소 점수 (이하면 랭킹에서 제거)
+    private static final double MIN_SCORE = 1.0; // 최소 점수 (이하면 랭킹에서 제거)
 
     private String keyFor(LocalDate date) {
         return DAILY_KEY_PREFIX + date.format(DAY_FMT);
@@ -48,34 +48,25 @@ public class BoardTrendingService {
      */
     public void incrementScore(Long boardId, double points) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
-        // 게시글 생성일 기준으로 일자 키를 결정
-        String key;
-        try {
-            var boardOpt = boardRepository.findById(boardId);
-            if (boardOpt.isEmpty()) {
-                log.warn("[Trending] 존재하지 않는 게시글 ID로 점수 적립 시도: {}", boardId);
-                return;
-            }
-            var createdAt = boardOpt.get().getCreatedAt();
-            var date = createdAt != null ? createdAt.toLocalDate() : LocalDate.now();
-            key = keyFor(date);
-        } catch (Exception e) {
-            // 예기치 못한 오류 시 안전하게 오늘 키로 폴백
-            log.warn("[Trending] 생성일 조회 실패로 오늘 키로 폴백: boardId={}, err={}", boardId, e.toString());
-            key = todayKey();
-        }
+        // 활동이 발생한 "오늘" 버킷에 점수를 누적합니다. (기존: 게시글 생성일 기준 -> 변경: 활동 시점 기준)
+        String key = todayKey();
+        
         zSetOps.incrementScore(key, boardId.toString(), points);
-        // 존재하지 않거나 TTL 없으면 TTL 설정
+        
+        // 키에 대한 TTL 설정 (이미 설정되어 있지 않은 경우에만)
         Long ttl = redisTemplate.getExpire(key);
         if (ttl == null || ttl <= 0) {
             redisTemplate.expire(key, Duration.ofDays(DAILY_KEY_TTL_DAYS));
         }
-        log.debug("[Trending] {} +{} (key={})", boardId, points, key);
+        
+        log.debug("[Trending] Board:{} +{} points added to key:{}", boardId, points, key);
     }
 
     public void addViewScore(Long boardId) { incrementScore(boardId, 1.0); }
     public void addLikeScore(Long boardId) { incrementScore(boardId, 3.0); }
+    public void removeLikeScore(Long boardId) { incrementScore(boardId, -3.0); }
     public void addCommentScore(Long boardId) { incrementScore(boardId, 5.0); }
+    public void removeCommentScore(Long boardId) { incrementScore(boardId, -5.0); }
 
     /**
      * 최근 WINDOW_DAYS 일의 키를 ZUNIONSTORE로 합산하여 상위 N 게시글을 반환
@@ -83,16 +74,36 @@ public class BoardTrendingService {
     public List<Long> getTopBoardIds(int limit) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
 
+        // 60초 캐시가 유효한 경우 캐시된 결과를 사용합니다.
+        Long ttl = redisTemplate.getExpire(ROLLING_KEY);
+        if (ttl != null && ttl > 0) {
+            Set<Object> topBoards = zSetOps.reverseRange(ROLLING_KEY, 0, Math.max(0, limit - 1));
+            if (topBoards != null && !topBoards.isEmpty()) {
+                return topBoards.stream()
+                        .map(obj -> Long.parseLong(obj.toString()))
+                        .collect(Collectors.toList());
+            }
+        }
+
         LocalDate today = LocalDate.now();
         List<String> keys = new ArrayList<>(WINDOW_DAYS);
         for (int i = 0; i < WINDOW_DAYS; i++) {
-            keys.add(keyFor(today.minusDays(i)));
+            String dayKey = keyFor(today.minusDays(i));
+            // 존재하는 키만 합산 대상에 포함
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(dayKey))) {
+                keys.add(dayKey);
+            }
         }
 
-        // 빈 집합 처리를 위해 첫 번째를 base로, 나머지를 others로 합산
-        String baseKey = keys.get(0);
-        List<String> others = keys.subList(1, keys.size());
-        zSetOps.unionAndStore(baseKey, others, ROLLING_KEY);
+        if (keys.isEmpty()) {
+            return List.of();
+        }
+
+        // 합산 및 캐싱
+        String firstKey = keys.get(0);
+        List<String> otherKeys = keys.subList(1, keys.size());
+        
+        zSetOps.unionAndStore(firstKey, otherKeys, ROLLING_KEY);
         redisTemplate.expire(ROLLING_KEY, Duration.ofSeconds(ROLLING_TTL_SECONDS));
 
         Set<Object> topBoards = zSetOps.reverseRange(ROLLING_KEY, 0, Math.max(0, limit - 1));
@@ -129,11 +140,11 @@ public class BoardTrendingService {
             String boardId = boardIdObj.toString();
             Double currentScore = zSetOps.score(key, boardId);
             if (currentScore != null) {
-                double newScore = currentScore - 5.0;
+                // 시간당 1.0점 감소 (기존 5.0점은 너무 급격함)
+                double newScore = currentScore - 1.0;
                 if (newScore < MIN_SCORE) {
                     zSetOps.remove(key, boardId);
                     removedCount++;
-                    log.debug("게시글 {} 점수 {}로 오늘 랭킹에서 제거", boardId, currentScore);
                 } else {
                     zSetOps.add(key, boardId, newScore);
                     decreasedCount++;

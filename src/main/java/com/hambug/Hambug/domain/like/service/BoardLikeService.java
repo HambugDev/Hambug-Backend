@@ -55,6 +55,7 @@ public class BoardLikeService {
                 redisTemplate.delete(redisKey);
             }
             eventPublisher.publishEvent(new LikeDeletedEvent(board.getUser().getId(), boardId));
+            boardTrendingService.removeLikeScore(boardId);
             isLiked = false;
         } else {
             // 좋아요 추가

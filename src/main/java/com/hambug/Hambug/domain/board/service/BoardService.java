@@ -210,11 +210,23 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardResponseDTO.BoardResponse> findTrendingBoards(int limit) {
         List<Long> topBoardIds = boardTrendingService.getTopBoardIds(limit);
+        log.info("topBoardIds : {}", topBoardIds);
         if (topBoardIds.isEmpty()) {
             return List.of();
         }
         List<Tuple> allByIds = boardRepository.findAllByIds(topBoardIds);
-        return getBoardResponses(allByIds);
+        log.info("allByIds : {}", allByIds);
+
+        List<BoardResponseDTO.BoardResponse> responses = getBoardResponses(allByIds);
+
+        // Redis에서 가져온 topBoardIds 순서대로 정렬
+        return topBoardIds.stream()
+                .map(id -> responses.stream()
+                        .filter(response -> response.id().equals(id))
+                        .findFirst()
+                        .orElse(null))
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private BoardResponseDTO.@NonNull BoardAllResponse getBoardAllResponse(Slice<Tuple> slice) {

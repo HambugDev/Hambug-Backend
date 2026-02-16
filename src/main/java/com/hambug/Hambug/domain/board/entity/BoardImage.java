@@ -15,7 +15,7 @@ public class BoardImage {
 
     @MapsId("boardId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "board_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Board board;
 
     public BoardImage(BoardImageId id, Board board) {

@@ -40,7 +40,7 @@ public class FcmDeviceToken extends Timestamped {
     private LocalDateTime lastSeenAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     public static FcmDeviceToken of(UserDto user, RegisterFcmTokenRequest request) {

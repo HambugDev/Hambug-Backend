@@ -36,11 +36,11 @@ public class Token extends Timestamped {
     private TokenType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
-    @OneToOne()
-    @JoinColumn(name = "admin_user_id", referencedColumnName = "id")
+    @OneToOne
+    @JoinColumn(name = "admin_user_id", referencedColumnName = "id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private AdminUser adminUser;
 
     public static Token of(String token, LocalDateTime expiredAt, UserDto userDto) {

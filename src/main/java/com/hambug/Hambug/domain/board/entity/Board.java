@@ -37,7 +37,7 @@ public class Board extends Timestamped {
     private List<BoardImage> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")

@@ -29,7 +29,7 @@ public class EmailVerification {
     private boolean isVerified;
 
     @OneToOne()
-    @JoinColumn(name = "admin_user_id", referencedColumnName = "id")
+    @JoinColumn(name = "admin_user_id", referencedColumnName = "id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private AdminUser adminUser;
 
     public static EmailVerification of(AdminUser adminUser) {

@@ -31,7 +31,7 @@ public class BoardTrendingService {
 
     private static final int WINDOW_DAYS = 30; // 최근 30일만 인기 집계
     private static final int DAILY_KEY_TTL_DAYS = 40; // 일자 키 TTL(버퍼 포함)
-    private static final int ROLLING_TTL_SECONDS = 60; // 롤링 합산 캐시 TTL
+    private static final int ROLLING_TTL_SECONDS = 30; // 롤링 합산 캐시 TTL
 
     private static final double MIN_SCORE = 1.0; // 최소 점수 (이하면 랭킹에서 제거)
 
@@ -48,14 +48,17 @@ public class BoardTrendingService {
      */
     public void incrementScore(Long boardId, double points) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        log.info("boardId: {}, zSetOps: {}", boardId, zSetOps);
         // 활동이 발생한 "오늘" 버킷에 점수를 누적합니다. (기존: 게시글 생성일 기준 -> 변경: 활동 시점 기준)
         String key = todayKey();
         
         zSetOps.incrementScore(key, boardId.toString(), points);
+
+        log.info("boardId: {}, zSetOps: {}", boardId, zSetOps);
         
         // 키에 대한 TTL 설정 (이미 설정되어 있지 않은 경우에만)
         Long ttl = redisTemplate.getExpire(key);
-        if (ttl == null || ttl <= 0) {
+        if (ttl <= 0) {
             redisTemplate.expire(key, Duration.ofDays(DAILY_KEY_TTL_DAYS));
         }
         
@@ -74,9 +77,10 @@ public class BoardTrendingService {
     public List<Long> getTopBoardIds(int limit) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
 
+        log.info("정보 : {}",zSetOps);
         // 60초 캐시가 유효한 경우 캐시된 결과를 사용합니다.
         Long ttl = redisTemplate.getExpire(ROLLING_KEY);
-        if (ttl != null && ttl > 0) {
+        if (ttl > 0) {
             Set<Object> topBoards = zSetOps.reverseRange(ROLLING_KEY, 0, Math.max(0, limit - 1));
             if (topBoards != null && !topBoards.isEmpty()) {
                 return topBoards.stream()
@@ -90,7 +94,7 @@ public class BoardTrendingService {
         for (int i = 0; i < WINDOW_DAYS; i++) {
             String dayKey = keyFor(today.minusDays(i));
             // 존재하는 키만 합산 대상에 포함
-            if (Boolean.TRUE.equals(redisTemplate.hasKey(dayKey))) {
+            if (redisTemplate.hasKey(dayKey)) {
                 keys.add(dayKey);
             }
         }

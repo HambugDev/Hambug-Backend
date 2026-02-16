@@ -82,7 +82,6 @@ public class CommentService {
 
     private void sendCommentNotification(Board board, User commentAuthor, String commentContent) {
         User boardAuthor = board.getUser();
-        log.info("사용자 닉네이마, !! : {}", commentAuthor.getNickname());
 
         if (boardAuthor.getId().equals(commentAuthor.getId())) {
             return;
